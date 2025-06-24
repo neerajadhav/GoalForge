@@ -1,0 +1,8 @@
+markdown
+fastapi
+google-generativeai
+markdown2
+jinja2
+uvicorn
+python-multipart
+python-dotenv

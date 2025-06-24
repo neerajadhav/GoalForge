@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini</title>
+    <link rel="stylesheet" type="text/css" href="../static/styles.css">
+</head>
+<body>
+    <div id="content">
+        <div id="userInputDisplay"></div>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="input-container">
+                <input type="text" id="nameInput" placeholder="Message Gemini..." autocomplete="off">
+                <label for="imageInput" class="image-upload-label">🐋</label>
+                <input type="file" id="imageInput" accept="image/*" class="hidden">
+            </div>
+            <p>Google Gemini API</p>
+        </form>
+    </div>
+    <script src="../static/script.js"></script>
+</body>
+</html>
