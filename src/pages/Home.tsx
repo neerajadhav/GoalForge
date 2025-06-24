@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
@@ -5,6 +7,7 @@ function Home() {
       <p className="text-lg text-center text-gray-600">
         Your journey to achieving your goals starts here.
       </p>
+      <Button>Click me</Button>
     </div>
   );
 }
