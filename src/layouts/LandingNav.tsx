@@ -18,12 +18,12 @@ function LandingNav() {
   const handleMobileNavClick = () => {
     setIsMenuOpen(false);
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }, 100);
   };
 
   const handleNavClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -38,25 +38,30 @@ function LandingNav() {
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-chart-1 bg-clip-text text-transparent">
               GoalForge
             </span>
-            <Badge variant="secondary" className="text-xs hidden sm:inline-flex">
+            <Badge
+              variant="secondary"
+              className="text-xs hidden sm:inline-flex"
+            >
               Beta
             </Badge>
           </Link>
 
           {/* Desktop LandingNav */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-2">
             {navItems.map((item) => (
-              <Button
-                key={item.path}
-                variant={location.pathname === item.path ? "default" : "ghost"}
-                size="sm"
-                className="relative"
-                onClick={handleNavClick}
-              >
-                <Link to={item.path}>
+              <Link to={item.path}>
+                <Button
+                  key={item.path}
+                  variant={
+                    location.pathname === item.path ? "default" : "ghost"
+                  }
+                  size="sm"
+                  className="relative"
+                  onClick={handleNavClick}
+                >
                   {item.label}
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             ))}
           </div>
 
@@ -64,28 +69,20 @@ function LandingNav() {
           <div className="flex items-center space-x-3">
             {/* CTA Buttons - Desktop */}
             <div className="hidden md:flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleNavClick}
-              >
-                <Link to="/auth/login">
+              <Link to="/auth/login">
+                <Button variant="ghost" size="sm" onClick={handleNavClick}>
                   Login
-                </Link>
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={handleNavClick}
-              >
-                <Link to="/auth/register">
+                </Button>
+              </Link>
+              <Link to="/auth/register">
+                <Button variant="default" size="sm" onClick={handleNavClick}>
                   Register
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
-            
+
             <ModeToggle />
-            
+
             {/* Mobile Menu Button */}
             <Button
               variant="ghost"
@@ -93,7 +90,11 @@ function LandingNav() {
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              {isMenuOpen ? (
+                <X className="h-4 w-4" />
+              ) : (
+                <Menu className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
@@ -103,41 +104,43 @@ function LandingNav() {
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-2">
               {navItems.map((item) => (
-                <Button
-                  key={item.path}
-                  variant={location.pathname === item.path ? "default" : "ghost"}
-                  size="sm"
-                  className="justify-start"
-                  onClick={handleMobileNavClick}
-                >
-                  <Link to={item.path}>
+                <Link to={item.path}>
+                  <Button
+                    key={item.path}
+                    variant={
+                      location.pathname === item.path ? "default" : "ghost"
+                    }
+                    size="sm"
+                    className="justify-start"
+                    onClick={handleMobileNavClick}
+                  >
                     {item.label}
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               ))}
-              
+
               {/* Mobile CTA Buttons */}
               <div className="pt-2 border-t border-border mt-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start w-full"
-                  onClick={handleMobileNavClick}
-                >
-                  <Link to="/auth/login">
+                <Link to="/auth/login">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="justify-start w-full"
+                    onClick={handleMobileNavClick}
+                  >
                     Login
-                  </Link>
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="justify-start w-full mt-2"
-                  onClick={handleMobileNavClick}
-                >
-                  <Link to="/auth/register">
+                  </Button>
+                </Link>
+                <Link to="/auth/register">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="justify-start w-full mt-2"
+                    onClick={handleMobileNavClick}
+                  >
                     Register
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

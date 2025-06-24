@@ -11,8 +11,8 @@ function DashNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { path: "/", label: "Home" },
-    { path: "/profile", label: "Profile" },
+    { path: "/app", label: "Home" },
+    { path: "/app/profile", label: "Profile" },
   ];
 
   const handleMobileNavClick = () => {
@@ -49,19 +49,21 @@ function DashNav() {
           {/* Right Side */}
           <div className="flex items-center space-x-3">
             {/* Desktop DashNav */}
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-2">
               {navItems.map((item) => (
-                <Button
-                  key={item.path}
-                  variant={
-                    location.pathname === item.path ? "default" : "ghost"
-                  }
-                  size="sm"
-                  className="relative"
-                  onClick={handleNavClick}
-                >
-                  <Link to={item.path}>{item.label}</Link>
-                </Button>
+                <Link to={item.path}>
+                  <Button
+                    key={item.path}
+                    variant={
+                      location.pathname === item.path ? "default" : "ghost"
+                    }
+                    size="sm"
+                    className="relative"
+                    onClick={handleNavClick}
+                  >
+                    {item.label}
+                  </Button>
+                </Link>
               ))}
             </div>
             <ModeToggle />
@@ -87,17 +89,19 @@ function DashNav() {
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-2">
               {navItems.map((item) => (
-                <Button
-                  key={item.path}
-                  variant={
-                    location.pathname === item.path ? "default" : "ghost"
-                  }
-                  size="sm"
-                  className="justify-start"
-                  onClick={handleMobileNavClick}
-                >
-                  <Link to={item.path}>{item.label}</Link>
-                </Button>
+                <Link to={item.path}>
+                  <Button
+                    key={item.path}
+                    variant={
+                      location.pathname === item.path ? "default" : "ghost"
+                    }
+                    size="sm"
+                    className="justify-start"
+                    onClick={handleMobileNavClick}
+                  >
+                    {item.label}
+                  </Button>
+                </Link>
               ))}
             </div>
           </div>

@@ -116,7 +116,7 @@ function Goals() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardContent className="pt-6">
@@ -247,10 +247,10 @@ function Goals() {
           </DialogContent>
         </Dialog>
 
-        <hr className="mt-8 mb-6 border-t border-muted" />
+        <hr className="mt-4 mb-6 border-t border-muted" />
 
-        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
-          <div className="max-w-full flex md:w-[500px]">
+        <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
+          <div className="max-w-full flex gap-2 md:w-[500px]">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-[10px] h-4 w-4 text-muted-foreground" />
               <Input
@@ -260,18 +260,18 @@ function Goals() {
                 className="pl-10"
               />
             </div>
-          </div>
-          <div className="flex items-center justify-between gap-2">
             <Button variant="outline">
               <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
+          </div>
+          <div className="fixed z-10 bottom-5 right-5 md:static md:flex items-center justify-end gap-2">
             <Button
               onClick={() => setShowAddGoal(true)}
               className="group transition-all duration-300 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg"
             >
-              <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
-              Add New Goal
+              <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="ml-2 hidden md:inline">Add New Goal</span>
             </Button>
           </div>
         </div>
