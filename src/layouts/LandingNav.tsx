@@ -1,3 +1,9 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, Target, X } from "lucide-react";
 
@@ -46,12 +52,11 @@ function LandingNav() {
             </Badge>
           </Link>
 
-          {/* Desktop LandingNav */}
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-2">
             {navItems.map((item) => (
-              <Link to={item.path}>
+              <Link to={item.path} key={item.path}>
                 <Button
-                  key={item.path}
                   variant={
                     location.pathname === item.path ? "default" : "ghost"
                   }
@@ -67,7 +72,7 @@ function LandingNav() {
 
           {/* Right Side */}
           <div className="flex items-center space-x-3">
-            {/* CTA Buttons - Desktop */}
+            {/* Desktop CTA */}
             <div className="hidden md:flex items-center space-x-2">
               <Link to="/auth/login">
                 <Button variant="ghost" size="sm" onClick={handleNavClick}>
@@ -83,68 +88,61 @@ function LandingNav() {
 
             <ModeToggle />
 
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? (
-                <X className="h-4 w-4" />
-              ) : (
-                <Menu className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        </div>
+            {/* Mobile Menu Dropdown */}
+            <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="md:hidden">
+                  {isMenuOpen ? (
+                    <X className="h-4 w-4" />
+                  ) : (
+                    <Menu className="h-4 w-4" />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="flex flex-col gap-1 w-48 mt-2">
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <DropdownMenuItem key={item.path} asChild>
+                      <Link
+                        to={item.path}
+                        onClick={handleMobileNavClick}
+                        className={`w-full block px-2 py-1.5 rounded-md text-sm font-medium ${
+                          isActive
+                            ? "bg-muted text-primary"
+                            : "hover:bg-accent hover:text-accent-foreground"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </DropdownMenuItem>
+                  );
+                })}
 
-        {/* Mobile LandingNav */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <div className="flex flex-col space-y-2">
-              {navItems.map((item) => (
-                <Link to={item.path}>
-                  <Button
-                    key={item.path}
-                    variant={
-                      location.pathname === item.path ? "default" : "ghost"
-                    }
-                    size="sm"
-                    className="justify-start"
-                    onClick={handleMobileNavClick}
-                  >
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
+                <div className="border-t border-border my-2" />
 
-              {/* Mobile CTA Buttons */}
-              <div className="pt-2 border-t border-border mt-2">
-                <Link to="/auth/login">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="justify-start w-full"
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/auth/login"
                     onClick={handleMobileNavClick}
+                    className="w-full block px-2 py-1.5 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground"
                   >
                     Login
-                  </Button>
-                </Link>
-                <Link to="/auth/register">
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="justify-start w-full mt-2"
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/auth/register"
                     onClick={handleMobileNavClick}
+                    className="w-full block px-2 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     Register
-                  </Button>
-                </Link>
-              </div>
-            </div>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );
