@@ -39,7 +39,7 @@ function NotFound() {
               </Button>
               
               <Button size="lg" variant="outline" asChild className="group">
-                <Link to="/goals">
+                <Link to="/app">
                   <Search className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
                   View Goals
                 </Link>
@@ -60,7 +60,7 @@ function NotFound() {
                 </Link>
                 <span className="text-muted">•</span>
                 <Link 
-                  to="/goals" 
+                  to="/app" 
                   className="text-sm text-primary hover:text-primary/80 underline-offset-4 hover:underline"
                 >
                   My Goals
