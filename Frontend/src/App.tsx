@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/app/Profile";
 import RegisterPage from "./pages/auth/Register";
 import { ThemeProvider } from "./components/theme-provider";
+import { ToastProvider } from "./contexts/ToastContext";
 
 const router = createBrowserRouter([
   {
@@ -67,7 +68,9 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AuthProvider>
-        <RouterProvider router={router} />
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
       </AuthProvider>
     </ThemeProvider>
   );

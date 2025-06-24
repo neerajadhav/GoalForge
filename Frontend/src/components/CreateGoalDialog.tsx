@@ -1,46 +1,113 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
+import type { CreateGoalRequest } from "@/types/goal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Target } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 interface CreateGoalDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onCreateGoal: (goalData: CreateGoalRequest) => Promise<void>;
 }
 
-export function CreateGoalDialog({ open, onOpenChange }: CreateGoalDialogProps) {
+export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoalDialogProps) {
+  const [formData, setFormData] = useState<CreateGoalRequest>({
+    title: '',
+    description: '',
+    category: '',
+    priority: 'medium',
+    progress: 0,
+    status: 'in-progress'
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.title.trim() || !formData.category.trim()) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await onCreateGoal(formData);
+      // Reset form and close dialog on success
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        priority: 'medium',
+        progress: 0,
+        status: 'in-progress'
+      });
+      onOpenChange(false);
+    } catch (error) {
+      // Error handling is done in the hook
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (field: keyof CreateGoalRequest, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-background max-w-2xl w-[calc(100vw-10px)] max-h-[calc(100vh-10px)] sm:rounded-lg p-4 sm:p-6 overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create a New Goal</DialogTitle>
+          <DialogDescription>
+            Set up a new goal with details, category, and target deadline to track your progress.
+          </DialogDescription>
         </DialogHeader>
-        <div className="space-y-6 p-0 pt-4">
+        <form onSubmit={handleSubmit} className="space-y-6 p-0 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="title">Goal Title *</Label>
               <Input
                 id="title"
                 placeholder="e.g., Learn Spanish fluently"
+                value={formData.title}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">Category *</Label>
               <Input
                 id="category"
                 placeholder="e.g., Learning, Health, Career"
+                value={formData.category}
+                onChange={(e) => handleInputChange('category', e.target.value)}
+                required
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="deadline">Target Deadline</Label>
-              <Input id="deadline" type="date" />
+              <Input 
+                id="deadline" 
+                type="date" 
+                value={formData.deadline || ''}
+                onChange={(e) => handleInputChange('deadline', e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="priority">Priority Level</Label>
-              <Input id="priority" placeholder="High, Medium, Low" />
+              <select 
+                id="priority"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={formData.priority} 
+                onChange={(e) => handleInputChange('priority', e.target.value as any)}
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
             </div>
           </div>
           <div className="space-y-2">
@@ -52,6 +119,8 @@ export function CreateGoalDialog({ open, onOpenChange }: CreateGoalDialogProps) 
               placeholder="Describe your goal in detail..."
               rows={4}
               className="resize-none"
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
             />
           </div>
           <div className="bg-muted/30 rounded-lg p-4 border border-muted">
@@ -67,19 +136,21 @@ export function CreateGoalDialog({ open, onOpenChange }: CreateGoalDialogProps) 
             </p>
           </div>
           <div className="flex gap-4 pt-4">
-            <Button className="flex-1">
+            <Button type="submit" className="flex-1" disabled={loading || !formData.title.trim() || !formData.category.trim()}>
               <Target className="mr-2 h-4 w-4" />
-              Create Goal
+              {loading ? 'Creating...' : 'Create Goal'}
             </Button>
             <Button
+              type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               className="flex-1"
+              disabled={loading}
             >
               Cancel
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

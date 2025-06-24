@@ -22,7 +22,6 @@ function DashNav() {
 
   const navItems = [
     { path: "/app", label: "Home" },
-    { path: "/app/profile", label: "Profile" },
   ];
 
   const handleMobileNavClick = () => {
@@ -69,9 +68,9 @@ function DashNav() {
                 <Link key={item.path} to={item.path}>
                   <Button
                     variant={
-                      location.pathname === item.path ? "default" : "ghost"
+                      location.pathname === item.path ? "default" : "outline"
                     }
-                    size="sm"
+                    size="default"
                     className="relative"
                     onClick={handleNavClick}
                   >

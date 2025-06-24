@@ -62,7 +62,7 @@ function LandingNav() {
                   variant={
                     location.pathname === item.path ? "default" : "ghost"
                   }
-                  size="sm"
+                  size="default"
                   className="relative"
                   onClick={handleNavClick}
                 >
