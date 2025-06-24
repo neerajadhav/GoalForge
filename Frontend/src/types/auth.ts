@@ -4,6 +4,7 @@ export interface User {
   username: string;
   is_active: boolean;
   is_verified: boolean;
+  has_gemini_key: boolean;
   created_at: string;
   updated_at?: string;
 }
@@ -24,6 +25,10 @@ export interface RegisterCredentials {
   password: string;
 }
 
+export interface GeminiKeyUpdate {
+  gemini_api_key: string;
+}
+
 export interface AuthState {
   user: User | null;
   tokens: AuthTokens | null;
@@ -36,4 +41,6 @@ export interface AuthContextType extends AuthState {
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  updateGeminiKey: (apiKey: string) => Promise<void>;
+  deleteGeminiKey: () => Promise<void>;
 }

@@ -9,6 +9,7 @@ import {
 
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
+import GeminiKeyManager from "../../components/GeminiKeyManager";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState } from "react";
 
@@ -139,6 +140,8 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
+
+        <GeminiKeyManager />
 
         <Card>
           <CardHeader>

@@ -4,10 +4,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.auth import UserCreate, UserResponse, Token, UserLogin
+from app.schemas.auth import UserCreate, UserResponse, Token, UserLogin, GeminiKeyUpdate
 from app.auth import crud
 from app.auth.security import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
-from app.auth.dependencies import get_current_active_user
+from app.auth.dependencies import get_current_active_user, user_to_response
 
 auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -30,7 +30,8 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
         )
     
     # Create new user
-    return crud.create_user(db=db, user=user)
+    new_user = crud.create_user(db=db, user=user)
+    return user_to_response(new_user)
 
 @auth_router.post("/login", response_model=Token)
 async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db)):
@@ -66,11 +67,40 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @auth_router.get("/me", response_model=UserResponse)
-async def read_users_me(current_user: UserResponse = Depends(get_current_active_user)):
+async def read_users_me(current_user = Depends(get_current_active_user)):
     """Get current user information"""
-    return current_user
+    return user_to_response(current_user)
+
+@auth_router.put("/gemini-key", response_model=UserResponse)
+async def update_gemini_key(
+    key_update: GeminiKeyUpdate,
+    current_user = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """Update user's Gemini API key"""
+    updated_user = crud.update_user_gemini_key(db, current_user.id, key_update.gemini_api_key)
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    return user_to_response(updated_user)
+
+@auth_router.delete("/gemini-key", response_model=UserResponse)
+async def delete_gemini_key(
+    current_user = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """Delete user's Gemini API key"""
+    updated_user = crud.update_user_gemini_key(db, current_user.id, "")
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    return user_to_response(updated_user)
 
 @auth_router.get("/protected")
-async def protected_route(current_user: UserResponse = Depends(get_current_active_user)):
+async def protected_route(current_user = Depends(get_current_active_user)):
     """Example protected route"""
     return {"message": f"Hello {current_user.username}, this is a protected route!"}

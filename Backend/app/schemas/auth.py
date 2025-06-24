@@ -20,11 +20,16 @@ class UserResponse(BaseModel):
     username: str
     is_active: bool
     is_verified: bool
+    has_gemini_key: bool  # Don't expose the actual key
     created_at: datetime
     updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+
+# Gemini API key update schema
+class GeminiKeyUpdate(BaseModel):
+    gemini_api_key: str
 
 # Token schemas
 class Token(BaseModel):

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.auth import User
 from app.schemas.auth import UserCreate
-from app.auth.security import get_password_hash, verify_password
+from app.auth.security import get_password_hash, verify_password, encrypt_api_key, decrypt_api_key
 from typing import Optional
 
 def get_user_by_email(db: Session, email: str) -> Optional[User]:
@@ -28,6 +28,27 @@ def create_user(db: Session, user: UserCreate) -> User:
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def update_user_gemini_key(db: Session, user_id: int, api_key: str) -> Optional[User]:
+    """Update user's Gemini API key"""
+    user = get_user_by_id(db, user_id)
+    if not user:
+        return None
+    
+    # Encrypt the API key before storing
+    encrypted_key = encrypt_api_key(api_key) if api_key else None
+    user.gemini_api_key = encrypted_key
+    db.commit()
+    db.refresh(user)
+    return user
+
+def get_user_gemini_key(db: Session, user_id: int) -> Optional[str]:
+    """Get user's decrypted Gemini API key"""
+    user = get_user_by_id(db, user_id)
+    if not user or not user.gemini_api_key:
+        return None
+    
+    return decrypt_api_key(user.gemini_api_key)
 
 def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
     """Authenticate user with email and password"""

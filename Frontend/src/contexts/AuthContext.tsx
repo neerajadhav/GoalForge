@@ -134,12 +134,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const updateGeminiKey = async (apiKey: string): Promise<void> => {
+    try {
+      const updatedUser = await authService.updateGeminiKey(apiKey);
+      dispatch({ type: 'SET_USER', payload: updatedUser });
+    } catch (error) {
+      console.error('Failed to update Gemini API key:', error);
+      throw error;
+    }
+  };
+
+  const deleteGeminiKey = async (): Promise<void> => {
+    try {
+      const updatedUser = await authService.deleteGeminiKey();
+      dispatch({ type: 'SET_USER', payload: updatedUser });
+    } catch (error) {
+      console.error('Failed to delete Gemini API key:', error);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     ...state,
     login,
     register,
     logout,
     refreshUser,
+    updateGeminiKey,
+    deleteGeminiKey,
   };
 
   return (

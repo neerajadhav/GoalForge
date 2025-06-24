@@ -1,4 +1,4 @@
-import type { AuthTokens, LoginCredentials, RegisterCredentials, User } from '../types/auth';
+import type { AuthTokens, GeminiKeyUpdate, LoginCredentials, RegisterCredentials, User } from '../types/auth';
 
 import ENV from '../config/env';
 
@@ -16,12 +16,18 @@ class AuthService {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
+    
+    // Merge headers properly
+    const defaultHeaders = {
+      'Content-Type': 'application/json',
+    };
+    
     const config: RequestInit = {
+      ...options,
       headers: {
-        'Content-Type': 'application/json',
+        ...defaultHeaders,
         ...options.headers,
       },
-      ...options,
     };
 
     const response = await fetch(url, config);
@@ -73,6 +79,22 @@ class AuthService {
 
   async getCurrentUser(): Promise<User> {
     return this.request<User>('/auth/me', {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
+  async updateGeminiKey(apiKey: string): Promise<User> {
+    const keyUpdate: GeminiKeyUpdate = { gemini_api_key: apiKey };
+    return this.request<User>('/auth/gemini-key', {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(keyUpdate),
+    });
+  }
+
+  async deleteGeminiKey(): Promise<User> {
+    return this.request<User>('/auth/gemini-key', {
+      method: 'DELETE',
       headers: this.getAuthHeaders(),
     });
   }

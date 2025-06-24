@@ -85,12 +85,12 @@ function LandingNav() {
               ) : (
                 <>
                   <Link to="/auth/login">
-                    <Button variant="ghost" size="sm" onClick={handleNavClick}>
+                    <Button variant="ghost" size="default" onClick={handleNavClick}>
                       Login
                     </Button>
                   </Link>
                   <Link to="/auth/register">
-                    <Button variant="default" size="sm" onClick={handleNavClick}>
+                    <Button variant="default" size="default" onClick={handleNavClick}>
                       Register
                     </Button>
                   </Link>

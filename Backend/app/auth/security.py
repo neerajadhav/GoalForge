@@ -2,8 +2,10 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from cryptography.fernet import Fernet
 from fastapi import HTTPException, status
 import os
+import base64
 
 # Security configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-this-in-production")
@@ -12,6 +14,47 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Encryption for API keys
+def get_encryption_key():
+    """Get or generate encryption key for API keys"""
+    key = os.getenv("ENCRYPTION_KEY")
+    if not key:
+        # Generate a key if not provided (for development)
+        key = base64.urlsafe_b64encode(os.urandom(32)).decode()
+        print(f"Generated encryption key: {key}")
+        print("Please set ENCRYPTION_KEY environment variable with this key")
+    return key.encode() if isinstance(key, str) else key
+
+_fernet = None
+
+def get_fernet():
+    """Get Fernet instance for encryption/decryption"""
+    global _fernet
+    if _fernet is None:
+        key = get_encryption_key()
+        _fernet = Fernet(key)
+    return _fernet
+
+def encrypt_api_key(api_key: str) -> str:
+    """Encrypt API key for storage"""
+    if not api_key:
+        return ""
+    fernet = get_fernet()
+    encrypted = fernet.encrypt(api_key.encode())
+    return base64.urlsafe_b64encode(encrypted).decode()
+
+def decrypt_api_key(encrypted_key: str) -> str:
+    """Decrypt API key for use"""
+    if not encrypted_key:
+        return ""
+    try:
+        fernet = get_fernet()
+        decoded = base64.urlsafe_b64decode(encrypted_key.encode())
+        decrypted = fernet.decrypt(decoded)
+        return decrypted.decode()
+    except Exception:
+        return ""
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""

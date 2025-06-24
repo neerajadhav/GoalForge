@@ -3,6 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.auth import User
+from app.schemas.auth import UserResponse
 from app.auth.security import verify_token
 
 # HTTP Bearer token scheme
@@ -30,3 +31,16 @@ def get_current_active_user(current_user: User = Depends(get_current_user)):
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+def user_to_response(user: User) -> UserResponse:
+    """Convert User model to UserResponse with has_gemini_key field"""
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        username=user.username,
+        is_active=user.is_active,
+        is_verified=user.is_verified,
+        has_gemini_key=bool(user.gemini_api_key),
+        created_at=user.created_at,
+        updated_at=user.updated_at
+    )
