@@ -30,11 +30,14 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "../../contexts/AuthContext";
 import { useState } from "react";
 
 function Goals() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddGoal, setShowAddGoal] = useState(false);
+
+  const { user } = useAuth();
 
   const goals = [
     {
@@ -117,6 +120,14 @@ function Goals() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-card-foreground">
+            Welcome back, {user?.username}!
+          </h1>
+          <p className="text-muted-foreground">
+            Here&apos;s what you need to focus on today.
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardContent className="pt-6">

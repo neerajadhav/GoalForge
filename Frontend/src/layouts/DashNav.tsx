@@ -2,18 +2,22 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, Target, X } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LogOut, Menu, Target, User, X } from "lucide-react";
 
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { ModeToggle } from "../components/mode-toggle";
+import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 
 function DashNav() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
@@ -30,6 +34,11 @@ function DashNav() {
 
   const handleNavClick = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
   };
 
   return (
@@ -54,12 +63,11 @@ function DashNav() {
 
           {/* Right Side */}
           <div className="flex items-center space-x-3">
-            {/* Desktop DashNav */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-2">
               {navItems.map((item) => (
-                <Link to={item.path}>
+                <Link key={item.path} to={item.path}>
                   <Button
-                    key={item.path}
                     variant={
                       location.pathname === item.path ? "default" : "ghost"
                     }
@@ -72,7 +80,37 @@ function DashNav() {
                 </Link>
               ))}
             </div>
+
             <ModeToggle />
+
+            {/* User Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <User className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="flex flex-col space-y-1 p-2">
+                  <p className="text-sm font-medium leading-none">{user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.email}
+                  </p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/app/profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Mobile Menu Button */}
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>

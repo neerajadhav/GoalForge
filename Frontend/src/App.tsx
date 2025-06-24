@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import About from "./pages/landing/About";
 import AppHome from "./pages/app/Home";
 import AuthLayout from "./layouts/AuthLayout";
+import { AuthProvider } from "./contexts/AuthContext";
 import DashLayout from "./layouts/DashLayout";
 import Home from "./pages/landing/Home";
 import Layout from "./layouts/LandingLayout";
@@ -65,7 +66,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ThemeProvider>
   );
 }

@@ -20,8 +20,10 @@ app = FastAPI(title="GoalForge API", version="1.0.0")
 # CORS Configuration
 origins = [
     "http://127.0.0.1:8000",
-    "http://localhost:3000",  # For frontend development
+    "http://localhost:3000",  # For frontend development (Next.js)
     "http://127.0.0.1:3000",
+    "http://localhost:5173",  # For Vite development server
+    "http://127.0.0.1:5173",
 ]
 app.add_middleware(
     CORSMiddleware,
