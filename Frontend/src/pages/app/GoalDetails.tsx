@@ -170,74 +170,73 @@ function GoalDetails() {
           </Button>
         </div>
 
-        {/* Goal Details Card */}
-        <div className="max-w-4xl mx-auto">
-          <Card className="shadow-lg">
-            <CardHeader className="pb-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex gap-3">
-                  <Badge
-                    className={`text-sm ${getPriorityColor(goal.priority)}`}
-                  >
-                    {goal.priority} priority
-                  </Badge>
-                  <Badge variant="outline" className="text-sm">
-                    {goal.category}
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className={`text-sm ${getStatusColor(goal.status)}`}
-                  >
-                    {goal.status.replace("-", " ")}
-                  </Badge>
-                </div>
-              </div>
-
-              <CardTitle className="text-2xl leading-tight text-card-foreground mb-3">
-                {goal.title}
-              </CardTitle>
-
-              <CardDescription className="text-base leading-relaxed">
-                {goal.description}
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-              {/* Progress Section */}
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-lg font-medium text-foreground">
-                    Progress
-                  </span>
-                  <span className="text-lg font-semibold text-foreground">
-                    {goal.progress}%
-                  </span>
-                </div>
-                <Progress value={goal.progress} className="h-3" />
-              </div>
-
-              <Separator />
-
-              {/* Goal Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                      Deadline
-                    </h3>
-                    <div className="flex items-center text-base text-foreground">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {formatDeadline(goal.deadline)}
-                    </div>
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Goal Details (1/3 width) */}
+          <div className="lg:col-span-1">
+            <Card className="shadow-lg">
+              <CardHeader className="pb-4">
+                <div className="flex flex-col gap-3 mb-4">
+                  <div className="flex flex-wrap gap-2">
+                    <Badge
+                      className={`text-xs ${getPriorityColor(goal.priority)}`}
+                    >
+                      {goal.priority} priority
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {goal.category}
+                    </Badge>
+                    <Badge
+                      variant="outline"
+                      className={`text-xs ${getStatusColor(goal.status)}`}
+                    >
+                      {goal.status.replace("-", " ")}
+                    </Badge>
                   </div>
                 </div>
 
+                <CardTitle className="text-xl leading-tight text-card-foreground mb-2">
+                  {goal.title}
+                </CardTitle>
+
+                <CardDescription className="text-sm leading-relaxed">
+                  {goal.description}
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {/* Progress Section */}
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-foreground">
+                      Progress
+                    </span>
+                    <span className="text-sm font-semibold text-foreground">
+                      {goal.progress}%
+                    </span>
+                  </div>
+                  <Progress value={goal.progress} className="h-2" />
+                </div>
+
+                <Separator />
+
+                {/* Goal Info */}
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                      Deadline
+                    </h3>
+                    <div className="flex items-center text-sm text-foreground">
+                      <Calendar className="mr-2 h-3 w-3" />
+                      {formatDeadline(goal.deadline)}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
                       Created
                     </h3>
-                    <p className="text-base text-foreground">
+                    <p className="text-sm text-foreground">
                       {new Date(goal.created_at).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
@@ -246,64 +245,168 @@ function GoalDetails() {
                     </p>
                   </div>
                 </div>
-              </div>
 
-              <Separator />
+                <Separator />
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex gap-3 flex-1">
-                  <Button
-                    size="default"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handleProgressIncrement}
-                    disabled={goal.progress >= 100}
-                  >
-                    <TrendingUp className="mr-2 h-4 w-4" />
-                    +10%
-                  </Button>
-                  <Button
-                    size="default"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handleMarkCompleted}
-                    disabled={goal.status === "completed"}
-                  >
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                    Complete
-                  </Button>
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={handleProgressIncrement}
+                      disabled={goal.progress >= 100}
+                    >
+                      <TrendingUp className="mr-1 h-3 w-3" />
+                      +10%
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={handleMarkCompleted}
+                      disabled={goal.status === "completed"}
+                    >
+                      <CheckCircle2 className="mr-1 h-3 w-3" />
+                      Complete
+                    </Button>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        // TODO: Implement edit functionality
+                        addToast({
+                          message: "Edit functionality coming soon!",
+                          type: "info",
+                        });
+                      }}
+                      className="flex-1"
+                    >
+                      <Edit className="mr-1 h-3 w-3" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 text-destructive hover:text-destructive"
+                      onClick={handleDelete}
+                    >
+                      <Trash2 className="mr-1 h-3 w-3" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - AI Roadmap Generation (2/3 width) */}
+          <div className="lg:col-span-2">
+            <Card className="shadow-lg h-full">
+              <CardHeader>
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">AI</span>
+                  </div>
+                  Generate Roadmap with AI
+                </CardTitle>
+                <CardDescription>
+                  Let AI create a personalized roadmap to help you achieve "
+                  {goal.title}"
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                {/* AI Features Preview */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold text-sm mb-2">
+                      Smart Milestones
+                    </h3>
+                    <p className="text-muted-foreground text-xs">
+                      Break down your goal into achievable milestones
+                    </p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold text-sm mb-2">
+                      Time Estimates
+                    </h3>
+                    <p className="text-muted-foreground text-xs">
+                      Get realistic time estimates for each step
+                    </p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold text-sm mb-2">
+                      Resource Suggestions
+                    </h3>
+                    <p className="text-muted-foreground text-xs">
+                      Discover tools and resources to help you succeed
+                    </p>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold text-sm mb-2">
+                      Progress Tracking
+                    </h3>
+                    <p className="text-muted-foreground text-xs">
+                      Monitor your progress with AI-powered insights
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    size="default"
-                    variant="outline"
-                    onClick={() => {
-                      // TODO: Implement edit functionality
-                      addToast({
-                        message: "Edit functionality coming soon!",
-                        type: "info",
-                      });
-                    }}
-                    className="flex-1"
-                  >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="default"
-                    variant="outline"
-                    className="flex-1 text-destructive hover:text-destructive"
-                    onClick={handleDelete}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </Button>
+                <Separator />
+
+                {/* Roadmap Preview Area */}
+                <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
+                  <div className="max-w-md mx-auto">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                      <TrendingUp className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      Your AI Roadmap Will Appear Here
+                    </h3>
+                    <p className="text-muted-foreground text-sm mb-6">
+                      Click the button below to generate a personalized roadmap
+                      for achieving your goal
+                    </p>
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                    >
+                      <div className="flex items-center gap-2 text-white">
+                        <div className="w-4 h-4 bg-white/20 rounded flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">
+                            AI
+                          </span>
+                        </div>
+                        Generate Roadmap
+                      </div>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                {/* Additional Info */}
+                <div className="bg-muted/30 rounded-lg p-4">
+                  <h4 className="font-semibold text-sm mb-2">
+                    💡 How it works
+                  </h4>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>
+                      • AI analyzes your goal details and current progress
+                    </li>
+                    <li>
+                      • Creates a step-by-step roadmap tailored to your timeline
+                    </li>
+                    <li>• Suggests resources, tools, and best practices</li>
+                    <li>• Provides milestone tracking and progress insights</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
