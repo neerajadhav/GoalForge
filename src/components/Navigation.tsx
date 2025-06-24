@@ -70,7 +70,7 @@ function Navigation() {
                 size="sm"
                 onClick={handleNavClick}
               >
-                <Link to="/login">
+                <Link to="/auth/login">
                   Login
                 </Link>
               </Button>
@@ -79,7 +79,7 @@ function Navigation() {
                 size="sm"
                 onClick={handleNavClick}
               >
-                <Link to="/register">
+                <Link to="/auth/register">
                   Register
                 </Link>
               </Button>
@@ -125,7 +125,7 @@ function Navigation() {
                   className="justify-start w-full"
                   onClick={handleMobileNavClick}
                 >
-                  <Link to="/login">
+                  <Link to="/auth/login">
                     Login
                   </Link>
                 </Button>
@@ -135,7 +135,7 @@ function Navigation() {
                   className="justify-start w-full mt-2"
                   onClick={handleMobileNavClick}
                 >
-                  <Link to="/register">
+                  <Link to="/auth/register">
                     Register
                   </Link>
                 </Button>
