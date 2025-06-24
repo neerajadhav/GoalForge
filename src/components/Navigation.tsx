@@ -16,6 +16,17 @@ function Navigation() {
     { path: "/about", label: "About" },
   ];
 
+  const handleMobileNavClick = () => {
+    setIsMenuOpen(false);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleNavClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <nav className="bg-background/80 backdrop-blur-md shadow-sm border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -40,8 +51,8 @@ function Navigation() {
                 key={item.path}
                 variant={location.pathname === item.path ? "default" : "ghost"}
                 size="sm"
-                asChild
                 className="relative"
+                onClick={handleNavClick}
               >
                 <Link to={item.path}>
                   {item.label}
@@ -52,6 +63,28 @@ function Navigation() {
 
           {/* Right Side */}
           <div className="flex items-center space-x-3">
+            {/* CTA Buttons - Desktop */}
+            <div className="hidden md:flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNavClick}
+              >
+                <Link to="/login">
+                  Login
+                </Link>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleNavClick}
+              >
+                <Link to="/register">
+                  Register
+                </Link>
+              </Button>
+            </div>
+            
             <ModeToggle />
             
             {/* Mobile Menu Button */}
@@ -75,15 +108,38 @@ function Navigation() {
                   key={item.path}
                   variant={location.pathname === item.path ? "default" : "ghost"}
                   size="sm"
-                  asChild
                   className="justify-start"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={handleMobileNavClick}
                 >
                   <Link to={item.path}>
                     {item.label}
                   </Link>
                 </Button>
               ))}
+              
+              {/* Mobile CTA Buttons */}
+              <div className="pt-2 border-t border-border mt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start w-full"
+                  onClick={handleMobileNavClick}
+                >
+                  <Link to="/login">
+                    Login
+                  </Link>
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="justify-start w-full mt-2"
+                  onClick={handleMobileNavClick}
+                >
+                  <Link to="/register">
+                    Register
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         )}
