@@ -3,9 +3,9 @@ import { Outlet } from 'react-router-dom';
 
 function Layout() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
-      <main>
+      <main className="relative">
         <Outlet />
       </main>
     </div>
