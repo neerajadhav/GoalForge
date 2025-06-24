@@ -3,10 +3,12 @@ import { Home, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import ScrollToTop from '../components/ScrollToTop';
 
 function NotFound() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center">
+      <ScrollToTop />
       <div className="container mx-auto px-4">
         <Card className="max-w-2xl mx-auto text-center shadow-lg">
           <CardContent className="py-16">

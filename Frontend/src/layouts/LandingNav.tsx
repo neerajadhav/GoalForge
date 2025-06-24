@@ -25,13 +25,10 @@ function LandingNav() {
 
   const handleMobileNavClick = () => {
     setIsMenuOpen(false);
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 100);
   };
 
   const handleNavClick = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Navigation handled by ScrollToTop component
   };
 
   return (
