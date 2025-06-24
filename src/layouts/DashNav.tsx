@@ -31,7 +31,7 @@ function DashNav() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
+          <Link to="/app" className="flex items-center space-x-2 group">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-chart-1 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
               <Target className="h-4 w-4 text-primary-foreground" />
             </div>
