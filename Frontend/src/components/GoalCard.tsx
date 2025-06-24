@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle2, Edit, Trash2, TrendingUp } from "lucide-react";
+import { Calendar, CheckCircle2, Eye, Trash2, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDeadline, getPriorityColor, getStatusColor } from "@/utils/goalUtils";
 import { memo, useCallback } from "react";
@@ -8,16 +8,18 @@ import { Button } from "@/components/ui/button";
 import type { Goal } from "@/types/goal";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
 
 interface GoalCardProps {
   goal: Goal;
   onUpdateProgress?: (id: number, progress: number) => void;
   onUpdateStatus?: (id: number, status: Goal['status']) => void;
-  onEdit?: (goal: Goal) => void;
   onDelete?: (id: number) => void;
 }
 
-export const GoalCard = memo(function GoalCard({ goal, onUpdateProgress, onUpdateStatus, onEdit, onDelete }: GoalCardProps) {
+export const GoalCard = memo(function GoalCard({ goal, onUpdateProgress, onUpdateStatus, onDelete }: GoalCardProps) {
+  const navigate = useNavigate();
+  
   const handleMarkCompleted = useCallback(() => {
     if (onUpdateStatus && goal.status !== 'completed') {
       onUpdateStatus(goal.id, 'completed');
@@ -39,11 +41,9 @@ export const GoalCard = memo(function GoalCard({ goal, onUpdateProgress, onUpdat
     }
   }, [goal.id, goal.progress, goal.status, onUpdateProgress, onUpdateStatus]);
 
-  const handleEdit = useCallback(() => {
-    if (onEdit) {
-      onEdit(goal);
-    }
-  }, [goal, onEdit]);
+  const handleView = useCallback(() => {
+    navigate(`/app/goal/${goal.id}`);
+  }, [goal.id, navigate]);
 
   const handleDelete = useCallback(() => {
     if (onDelete) {
@@ -125,21 +125,19 @@ export const GoalCard = memo(function GoalCard({ goal, onUpdateProgress, onUpdat
         </div>
         
         <div className="flex gap-2">
-          {onEdit && (
-            <Button 
-              size="sm" 
-              variant="ghost" 
-              className="flex-1"
-              onClick={handleEdit}
-            >
-              <Edit className="mr-1 h-3 w-3" />
-              Edit
-            </Button>
-          )}
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="flex-1"
+            onClick={handleView}
+          >
+            <Eye className="mr-1 h-3 w-3" />
+            View
+          </Button>
           {onDelete && (
             <Button 
               size="sm" 
-              variant="ghost" 
+              variant="outline" 
               className="flex-1 text-destructive hover:text-destructive"
               onClick={handleDelete}
             >

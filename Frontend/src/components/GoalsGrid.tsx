@@ -7,7 +7,6 @@ interface GoalsGridProps {
   loading?: boolean;
   onUpdateProgress?: (id: number, progress: number) => void;
   onUpdateStatus?: (id: number, status: Goal['status']) => void;
-  onEdit?: (goal: Goal) => void;
   onDelete?: (id: number) => void;
 }
 
@@ -16,7 +15,6 @@ export const GoalsGrid = memo(function GoalsGrid({
   loading, 
   onUpdateProgress, 
   onUpdateStatus, 
-  onEdit, 
   onDelete 
 }: GoalsGridProps) {
   if (loading) {
@@ -48,7 +46,6 @@ export const GoalsGrid = memo(function GoalsGrid({
           goal={goal} 
           onUpdateProgress={onUpdateProgress}
           onUpdateStatus={onUpdateStatus}
-          onEdit={onEdit}
           onDelete={onDelete}
         />
       ))}

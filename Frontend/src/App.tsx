@@ -5,6 +5,7 @@ import AppHome from "./pages/app/Home";
 import AuthLayout from "./layouts/AuthLayout";
 import { AuthProvider } from "./contexts/AuthContext";
 import DashLayout from "./layouts/DashLayout";
+import GoalDetails from "./pages/app/GoalDetails";
 import Home from "./pages/landing/Home";
 import Layout from "./layouts/LandingLayout";
 import LoginPage from "./pages/auth/Login";
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <AppHome />,
+      },
+      {
+        path: "goal/:id",
+        element: <GoalDetails />,
       },
       {
         path: "profile",

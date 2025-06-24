@@ -1,7 +1,7 @@
-import type { Goal, GoalFilters } from "@/types/goal";
 import { useGoalStats, useGoals } from "../../hooks/useGoals";
 
 import { CreateGoalDialog } from "@/components/CreateGoalDialog";
+import type { GoalFilters } from "@/types/goal";
 import { GoalsGrid } from "@/components/GoalsGrid";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { StatsGrid } from "@/components/StatsGrid";
@@ -31,11 +31,6 @@ function Goals() {
 
   const handleCreateGoal = async (goalData: any) => {
     await createGoal(goalData);
-  };
-
-  const handleEditGoal = (goal: Goal) => {
-    // TODO: Implement edit functionality
-    console.log('Edit goal:', goal);
   };
 
   const handleDeleteGoal = async (id: number) => {
@@ -76,7 +71,6 @@ function Goals() {
           loading={isInitialLoading}
           onUpdateProgress={updateGoalProgress}
           onUpdateStatus={updateGoalStatus}
-          onEdit={handleEditGoal}
           onDelete={handleDeleteGoal}
         />
       </div>
