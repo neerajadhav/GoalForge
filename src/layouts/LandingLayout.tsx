@@ -1,4 +1,4 @@
-import Navigation from './Navigation';
+import Navigation from './LandingNav';
 import { Outlet } from 'react-router-dom';
 
 function Layout() {

@@ -1,18 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
 import { Menu, Target, X } from "lucide-react";
 
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { ModeToggle } from "./mode-toggle";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { ModeToggle } from "../components/mode-toggle";
 import { useState } from "react";
 
-function Navigation() {
+function LandingNav() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
     { path: "/", label: "Home" },
-    { path: "/goals", label: "Goals" },
     { path: "/about", label: "About" },
   ];
 
@@ -44,7 +43,7 @@ function Navigation() {
             </Badge>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop LandingNav */}
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <Button
@@ -99,7 +98,7 @@ function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile LandingNav */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-2">
@@ -148,4 +147,4 @@ function Navigation() {
   );
 }
 
-export default Navigation;
+export default LandingNav;

@@ -1,18 +1,20 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import About from './pages/About';
-import AuthLayout from './components/AuthLayout';
-import Goals from './pages/Goals';
-import Home from './pages/Home';
-import Layout from './components/Layout';
-import LoginPage from './pages/Login';
-import NotFound from './pages/NotFound';
-import RegisterPage from './pages/Register';
-import { ThemeProvider } from './components/theme-provider';
+import About from "./pages/landing/About";
+import AppHome from "./pages/app/Home";
+import AuthLayout from "./layouts/AuthLayout";
+import DashLayout from "./layouts/DashLayout";
+import Home from "./pages/landing/Home";
+import Layout from "./layouts/LandingLayout";
+import LoginPage from "./pages/auth/Login";
+import NotFound from "./pages/NotFound";
+import Profile from "./pages/app/Profile";
+import RegisterPage from "./pages/auth/Register";
+import { ThemeProvider } from "./components/theme-provider";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Layout />,
     errorElement: <NotFound />,
     children: [
@@ -21,31 +23,41 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: 'goals',
-        element: <Goals />,
-      },
-      {
-        path: 'about',
+        path: "about",
         element: <About />,
       },
     ],
   },
   {
-    path: '/auth',
+    path: "/app",
+    element: <DashLayout />,
+    children: [
+      {
+        index: true,
+        element: <AppHome />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      }
+    ],
+  },
+  {
+    path: "/auth",
     element: <AuthLayout />,
     children: [
       {
-        path: 'login',
+        path: "login",
         element: <LoginPage />,
       },
       {
-        path: 'register',
+        path: "register",
         element: <RegisterPage />,
       },
     ],
   },
   {
-    path: '*',
+    path: "*",
     element: <NotFound />,
   },
 ]);
