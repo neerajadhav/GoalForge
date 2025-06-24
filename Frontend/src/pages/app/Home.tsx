@@ -120,9 +120,9 @@ function Goals() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-4">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-card-foreground">
-            Welcome back, {user?.username}!
+        <div className="mb-5">
+          <h1 className="text-xl text-card-foreground">
+            Welcome back, <span className="font-bold">{user?.username}</span>!
           </h1>
           <p className="text-muted-foreground">
             Here&apos;s what you need to focus on today.

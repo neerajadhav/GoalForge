@@ -10,10 +10,12 @@ import { Menu, Target, X } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { ModeToggle } from "../components/mode-toggle";
+import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 
 function LandingNav() {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
@@ -74,16 +76,26 @@ function LandingNav() {
           <div className="flex items-center space-x-3">
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center space-x-2">
-              <Link to="/auth/login">
-                <Button variant="ghost" size="sm" onClick={handleNavClick}>
-                  Login
-                </Button>
-              </Link>
-              <Link to="/auth/register">
-                <Button variant="default" size="sm" onClick={handleNavClick}>
-                  Register
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/app">
+                  <Button variant="outline" size="default" onClick={handleNavClick}>
+                    Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/auth/login">
+                    <Button variant="ghost" size="sm" onClick={handleNavClick}>
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/auth/register">
+                    <Button variant="default" size="sm" onClick={handleNavClick}>
+                      Register
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             <ModeToggle />
@@ -121,24 +133,38 @@ function LandingNav() {
 
                 <div className="border-t border-border my-2" />
 
-                <DropdownMenuItem asChild>
-                  <Link
-                    to="/auth/login"
-                    onClick={handleMobileNavClick}
-                    className="w-full block px-2 py-1.5 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                  >
-                    Login
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    to="/auth/register"
-                    onClick={handleMobileNavClick}
-                    className="w-full block px-2 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
-                  >
-                    Register
-                  </Link>
-                </DropdownMenuItem>
+                {isAuthenticated ? (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/app"
+                      onClick={handleMobileNavClick}
+                      className="w-full block px-2 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to="/auth/login"
+                        onClick={handleMobileNavClick}
+                        className="w-full block px-2 py-1.5 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                      >
+                        Login
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to="/auth/register"
+                        onClick={handleMobileNavClick}
+                        className="w-full block px-2 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        Register
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
