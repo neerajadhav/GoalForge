@@ -6,3 +6,8 @@ jinja2
 uvicorn
 python-multipart
 python-dotenv
+sqlalchemy
+alembic
+passlib[bcrypt]
+python-jose[cryptography]
+pydantic[email]

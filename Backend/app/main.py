@@ -2,17 +2,27 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.upload import upload_router
 from app.api.generate import generate_router
 from app.api.health import health_router
+from app.api.auth import auth_router
+from app.database import Base, engine
 
 # Load environment variables from .env file
 load_dotenv()
 
-app = FastAPI()
+# Create database tables
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="GoalForge API", version="1.0.0")
 
 # CORS Configuration
-origins = ["http://127.0.0.1:8000"]
+origins = [
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",  # For frontend development
+    "http://127.0.0.1:3000",
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -22,6 +32,7 @@ app.add_middleware(
 )
 
 # Include routers for endpoints
+app.include_router(auth_router)
 app.include_router(upload_router)
 app.include_router(generate_router)
 app.include_router(health_router)  # Optional, for a health check endpoint
