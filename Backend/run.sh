@@ -9,12 +9,14 @@ echo "Starting GoalForge Backend Server..."
 if [ -d ".venv" ]; then
     echo "Activating virtual environment..."
     source ./.venv/bin/activate
-fi
-
-# Install dependencies if requirements.txt exists
-if [ -f "requirements.txt" ]; then
-    echo "Installing dependencies..."
-    pip install -r requirements.txt
+    
+    # Install dependencies if requirements.txt exists (only if venv is activated)
+    if [ -f "requirements.txt" ]; then
+        echo "Installing dependencies..."
+        pip install -r requirements.txt
+    fi
+else
+    echo "Warning: Virtual environment (.venv) not found. Skipping dependency installation."
 fi
 
 # Start the server
