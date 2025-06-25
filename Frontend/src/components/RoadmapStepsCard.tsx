@@ -101,9 +101,9 @@ export function RoadmapStepsCard({
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
     // Bold: **text**
-    safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    safe = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     // Italic: *text*
-    safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    safe = safe.replace(/\*(.*?)\*/g, "<em>$1</em>");
     // Preserve line breaks
     safe = safe.replace(/\n/g, "<br />");
     return safe;
@@ -169,19 +169,16 @@ export function RoadmapStepsCard({
                   }}
                 >
                   <div className="flex items-start gap-3 w-full">
-                    <Button
-                      variant={"default"}
-                      size="icon"
-                      disabled={stepLoading === step.id}
-                      className={`font-bold
-                        ${
-                          step.is_completed
-                            ? "bg-green-600"
-                            : "bg-secondary text-foreground border"
-                        }`}
+                    <div
+                      className={`font-bold w-8 h-8 flex items-center justify-center rounded
+                      ${
+                        step.is_completed
+                          ? "bg-green-600 text-white"
+                          : "bg-primary-foreground text-primary border"
+                      }`}
                     >
                       {index + 1}
-                    </Button>
+                    </div>
                     <div className="flex-1">
                       {stepEditId === step.id ? (
                         <input
@@ -204,9 +201,17 @@ export function RoadmapStepsCard({
                           </p>
                           {step.description && (
                             <p
-                              className="text-sm text-foreground mt-1"
+                              className={`text-sm mt-1 ${
+                                step.is_completed
+                                  ? "line-through text-muted-foreground line-clamp-2"
+                                  : "text-foreground"
+                              }`}
                               style={{ whiteSpace: "pre-line" }}
-                              dangerouslySetInnerHTML={{ __html: renderDescriptionWithMarkdown(step.description) }}
+                              dangerouslySetInnerHTML={{
+                                __html: renderDescriptionWithMarkdown(
+                                  step.description
+                                ),
+                              }}
                             />
                           )}
                         </div>
