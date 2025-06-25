@@ -26,16 +26,40 @@ interface GoalInfoCardProps {
   addToast: (toast: { message: string; type: string }) => void;
 }
 
-export function GoalInfoCard({ goal, setGoal, onDelete, addToast }: GoalInfoCardProps) {
+function renderDescriptionWithMarkdown(text: string) {
+  if (!text) return "";
+  // Escape HTML special chars
+  let safe = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  // Bold: **text**
+  safe = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  // Italic: *text*
+  safe = safe.replace(/\*(.*?)\*/g, "<em>$1</em>");
+  // Preserve line breaks
+  safe = safe.replace(/\n/g, "<br />");
+  return safe;
+}
+
+export function GoalInfoCard({
+  goal,
+  setGoal,
+  onDelete,
+  addToast,
+}: GoalInfoCardProps) {
   const [editOpen, setEditOpen] = useState(false);
 
   return (
     <>
       <Card className="shadow-lg">
-        <CardHeader className="pb-4">
+        <CardHeader>
           <div className="flex flex-col gap-3 mb-4">
             <div className="flex flex-wrap gap-2">
-              <Badge className={`text-xs ${getPriorityColor(goal.priority)}`} key={goal.priority}>
+              <Badge
+                className={`text-xs ${getPriorityColor(goal.priority)}`}
+                key={goal.priority}
+              >
                 {goal.priority} priority
               </Badge>
               <Badge variant="outline" className="text-xs">
@@ -53,11 +77,19 @@ export function GoalInfoCard({ goal, setGoal, onDelete, addToast }: GoalInfoCard
             {goal.title}
           </CardTitle>
           <CardDescription className="text-sm leading-relaxed">
-            {goal.description}
+            {goal.description && (
+              <p
+                className="text-sm text-foreground mt-1"
+                style={{ whiteSpace: "pre-line" }}
+                dangerouslySetInnerHTML={{
+                  __html: renderDescriptionWithMarkdown(goal.description),
+                }}
+              />
+            )}
           </CardDescription>
         </CardHeader>
+        <Separator />
         <CardContent className="space-y-4">
-          <Separator />
           <div className="flex gap-3 justify-between">
             <div>
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
@@ -81,7 +113,7 @@ export function GoalInfoCard({ goal, setGoal, onDelete, addToast }: GoalInfoCard
               </p>
             </div>
           </div>
-          <Separator />
+          {/* <Separator /> */}
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
               <Button

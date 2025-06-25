@@ -42,7 +42,6 @@ export const GoalsGrid = memo(function GoalsGrid({
         <GoalCard 
           key={goal.id} 
           goal={goal} 
-          onUpdateStatus={onUpdateStatus}
           onDelete={onDelete}
         />
       ))}

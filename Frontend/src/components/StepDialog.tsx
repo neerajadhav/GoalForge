@@ -48,7 +48,7 @@ export function StepDialog({
           </DialogHeader>
           <div className="space-y-3 py-2">
             <input
-              className="w-full border px-3 py-2 rounded text-sm"
+              className="bg-primary-foreground w-full border px-3 py-2 rounded text-sm"
               placeholder="Step title"
               value={title}
               onChange={e => setTitle(e.target.value)}
@@ -56,7 +56,7 @@ export function StepDialog({
               required
             />
             <textarea
-              className="w-full border px-3 py-2 rounded text-sm min-h-[60px]"
+              className="bg-primary-foreground w-full border px-3 py-2 rounded text-sm min-h-[200px]"
               placeholder="Step description (optional)"
               value={description}
               onChange={e => setDescription(e.target.value)}

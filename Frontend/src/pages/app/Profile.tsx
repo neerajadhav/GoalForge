@@ -39,7 +39,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 md:max-w-5xl">
+    <div className="container mx-auto px-4 py-4 md:max-w-5xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold">Profile</h1>
