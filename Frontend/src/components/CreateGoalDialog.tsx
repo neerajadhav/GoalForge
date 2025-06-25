@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { CreateGoalRequest } from "@/types/goal";
@@ -6,23 +7,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Target } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
 
 interface CreateGoalDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreateGoal: (goalData: CreateGoalRequest) => Promise<void>;
+  initialData?: Partial<CreateGoalRequest>;
+  submitLabel?: string;
 }
 
-export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoalDialogProps) {
+export function CreateGoalDialog({ open, onOpenChange, onCreateGoal, initialData, submitLabel }: CreateGoalDialogProps) {
   const [formData, setFormData] = useState<CreateGoalRequest>({
     title: '',
     description: '',
     category: '',
     priority: 'medium',
-    status: 'in-progress'
+    status: 'in-progress',
+    ...initialData,
   });
   const [loading, setLoading] = useState(false);
+
+  // Always sync formData with initialData when dialog is opened
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        priority: 'medium',
+        status: 'in-progress',
+        ...initialData,
+      });
+    }
+  }, [open, initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +57,8 @@ export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoa
         description: '',
         category: '',
         priority: 'medium',
-        status: 'in-progress'
+        status: 'in-progress',
+        ...initialData,
       });
       onOpenChange(false);
     } catch (error) {
@@ -58,9 +76,11 @@ export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoa
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-background max-w-2xl w-[calc(100vw-10px)] max-h-[calc(100vh-10px)] sm:rounded-lg p-4 sm:p-6 overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create a New Goal</DialogTitle>
+          <DialogTitle>{submitLabel === 'Update Goal' ? 'Update Goal' : 'Create a New Goal'}</DialogTitle>
           <DialogDescription>
-            Set up a new goal with details, category, and target deadline to track your progress.
+            {submitLabel === 'Update Goal'
+              ? 'Edit your goal details, category, and target deadline.'
+              : 'Set up a new goal with details, category, and target deadline to track your progress.'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 p-0 pt-4">
@@ -99,8 +119,8 @@ export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoa
               <select 
                 id="priority"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={formData.priority} 
-                onChange={(e) => handleInputChange('priority', e.target.value as any)}
+                value={formData.priority}
+                onChange={(e) => handleInputChange('priority', e.target.value)}
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -136,7 +156,7 @@ export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoa
           <div className="flex gap-4 pt-4">
             <Button type="submit" className="flex-1" disabled={loading || !formData.title.trim() || !formData.category.trim()}>
               <Target className="mr-2 h-4 w-4" />
-              {loading ? 'Creating...' : 'Create Goal'}
+              {loading ? (submitLabel ? `${submitLabel}...` : 'Saving...') : (submitLabel || 'Create Goal')}
             </Button>
             <Button
               type="button"

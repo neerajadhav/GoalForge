@@ -269,6 +269,7 @@ function GoalDetails() {
             {goal && (
               <GoalInfoCard
                 goal={goal}
+                setGoal={setGoal}
                 onDelete={handleDelete}
                 addToast={(toast) => addToast({ ...toast, type: toast.type as 'error' | 'success' | 'warning' | 'info' })}
               />
