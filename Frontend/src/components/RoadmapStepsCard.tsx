@@ -5,7 +5,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle2, Edit, PlusCircle, Trash2, X } from "lucide-react";
+import {
+  CheckCircle2,
+  Edit,
+  MoreHorizontal,
+  MoreVertical,
+  PlusCircle,
+  Trash2,
+  X,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
 import type { Roadmap } from "@/types/roadmap";
@@ -171,15 +185,55 @@ export function RoadmapStepsCard({
                   }}
                 >
                   <div className="flex items-start gap-3 w-full">
-                    <div
-                      className={`font-bold w-8 h-8 flex items-center justify-center rounded
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div
+                        className={`font-bold w-8 h-8 flex items-center justify-center rounded
                       ${
                         step.is_completed
                           ? "bg-green-600 text-white"
                           : "bg-primary-foreground text-primary border"
                       }`}
-                    >
-                      {index + 1}
+                      >
+                        {index + 1}
+                      </div>
+                      <div className="flex gap-1">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="w-8 h-8 p-0 rounded-full"
+                            >
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-32 p-1">
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenEditStep(
+                                  step.id,
+                                  step.title,
+                                  step.description
+                                );
+                              }}
+                              disabled={stepLoading === step.id}
+                            >
+                              <Edit className="w-4 h-4 mr-2" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteStep(step.id);
+                              }}
+                              disabled={stepLoading === step.id}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
                     <div className="flex-1">
                       {stepEditId === step.id ? (
@@ -220,61 +274,6 @@ export function RoadmapStepsCard({
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-1 ml-2">
-                    {stepEditId === step.id ? (
-                      <>
-                        <Button
-                          size="icon"
-                          variant={"ghost"}
-                          onClick={() => onSaveStep(step.id)}
-                          disabled={stepLoading === step.id}
-                          className="cursor-pointer"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-green-600" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => setStepEditId(null)}
-                          disabled={stepLoading === step.id}
-                          className="cursor-pointer"
-                        >
-                          <span className="sr-only">Cancel</span>
-                          <X className="w-4 h-4 text-muted-foreground" />
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenEditStep(
-                              step.id,
-                              step.title,
-                              step.description
-                            );
-                          }}
-                          disabled={stepLoading === step.id}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="text-destructive"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDeleteStep(step.id);
-                          }}
-                          disabled={stepLoading === step.id}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
                 </div>
               ))}
             </div>
@@ -283,9 +282,13 @@ export function RoadmapStepsCard({
               {/* Delete Roadmap Button */}
               {onDeleteRoadmap && (
                 <Button
-                  variant="destructive"
+                  variant="outline"
                   size="sm"
-                  onClick={onDeleteRoadmap}
+                  className="text-destructive"
+                  onClick={async () => {
+                    await onDeleteRoadmap();
+                    window.location.reload();
+                  }}
                 >
                   <Trash2 className="h-4 w-4 mr-1" /> Delete Roadmap
                 </Button>
