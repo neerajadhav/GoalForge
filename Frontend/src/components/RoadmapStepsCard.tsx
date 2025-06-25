@@ -35,7 +35,11 @@ interface RoadmapStepsCardProps {
   stepEditDescription: string;
   setStepEditDescription: (desc: string) => void;
   onAddStepWithDescription?: (title: string, description: string) => void;
-  onSaveStepWithDescription?: (stepId: number, title: string, description: string) => void;
+  onSaveStepWithDescription?: (
+    stepId: number,
+    title: string,
+    description: string
+  ) => void;
 }
 
 export function RoadmapStepsCard({
@@ -64,10 +68,11 @@ export function RoadmapStepsCard({
 }: RoadmapStepsCardProps) {
   // Modal state for add/edit
   const [stepDialogOpen, setStepDialogOpen] = useState(false);
-  const [stepDialogMode, setStepDialogMode] = useState<'add' | 'edit'>("add");
+  const [stepDialogMode, setStepDialogMode] = useState<"add" | "edit">("add");
   const [editingStepId, setEditingStepId] = useState<number | null>(null);
   const [stepDialogInitialTitle, setStepDialogInitialTitle] = useState("");
-  const [stepDialogInitialDescription, setStepDialogInitialDescription] = useState("");
+  const [stepDialogInitialDescription, setStepDialogInitialDescription] =
+    useState("");
 
   // Replace add step input with modal
   const handleOpenAddStep = () => {
@@ -77,7 +82,11 @@ export function RoadmapStepsCard({
     setNewStepDescription("");
     setStepDialogOpen(true);
   };
-  const handleOpenEditStep = (stepId: number, currentTitle: string, currentDescription?: string) => {
+  const handleOpenEditStep = (
+    stepId: number,
+    currentTitle: string,
+    currentDescription?: string
+  ) => {
     setStepDialogMode("edit");
     setEditingStepId(stepId);
     setStepDialogInitialTitle(currentTitle);
@@ -85,6 +94,23 @@ export function RoadmapStepsCard({
     setStepEditDescription(currentDescription || "");
     setStepDialogOpen(true);
   };
+
+  // Helper to render bold (**text**) and italics (*text*) safely
+  function renderDescriptionWithMarkdown(text: string) {
+    if (!text) return "";
+    // Escape HTML special chars
+    let safe = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    // Bold: **text**
+    safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Italic: *text*
+    safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Preserve line breaks
+    safe = safe.replace(/\n/g, "<br />");
+    return safe;
+  }
 
   return (
     <Card className="h-full shadow-lg">
@@ -145,7 +171,7 @@ export function RoadmapStepsCard({
                     onToggleStep(step.id, step.is_completed);
                   }}
                 >
-                  <div className="flex items-center gap-3 w-full">
+                  <div className="flex items-start gap-3 w-full">
                     <Button
                       variant={"default"}
                       size="icon"
@@ -171,7 +197,7 @@ export function RoadmapStepsCard({
                       ) : (
                         <div>
                           <p
-                            className={`text-sm ${
+                            className={`font-bold ${
                               step.is_completed
                                 ? "line-through text-muted-foreground"
                                 : "text-foreground"
@@ -180,9 +206,11 @@ export function RoadmapStepsCard({
                             {step.title}
                           </p>
                           {step.description && (
-                            <p className="text-xs text-muted-foreground mt-1 ml-1">
-                              {step.description}
-                            </p>
+                            <p
+                              className="text-sm text-foreground mt-1"
+                              style={{ whiteSpace: "pre-line" }}
+                              dangerouslySetInnerHTML={{ __html: renderDescriptionWithMarkdown(step.description) }}
+                            />
                           )}
                         </div>
                       )}
@@ -218,7 +246,11 @@ export function RoadmapStepsCard({
                           variant="ghost"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleOpenEditStep(step.id, step.title, step.description);
+                            handleOpenEditStep(
+                              step.id,
+                              step.title,
+                              step.description
+                            );
                           }}
                           disabled={stepLoading === step.id}
                         >
@@ -269,11 +301,18 @@ export function RoadmapStepsCard({
                   } else {
                     onAddStep();
                   }
-                } else if (stepDialogMode === "edit" && editingStepId !== null) {
+                } else if (
+                  stepDialogMode === "edit" &&
+                  editingStepId !== null
+                ) {
                   setStepEditTitle(title);
                   setStepEditDescription(description);
                   if (onSaveStepWithDescription) {
-                    onSaveStepWithDescription(editingStepId, title, description);
+                    onSaveStepWithDescription(
+                      editingStepId,
+                      title,
+                      description
+                    );
                   } else {
                     onSaveStep(editingStepId);
                   }
