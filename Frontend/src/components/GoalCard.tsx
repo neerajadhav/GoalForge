@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle2, Eye, Trash2 } from "lucide-react";
+import { Calendar, Trash2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDeadline, getPriorityColor, getStatusColor } from "@/utils/goalUtils";
 import { memo, useCallback } from "react";
@@ -11,18 +11,11 @@ import { useNavigate } from "react-router-dom";
 
 interface GoalCardProps {
   goal: Goal;
-  onUpdateStatus?: (id: number, status: Goal['status']) => void;
   onDelete?: (id: number) => void;
 }
 
-export const GoalCard = memo(function GoalCard({ goal, onUpdateStatus, onDelete }: GoalCardProps) {
+export const GoalCard = memo(function GoalCard({ goal, onDelete }: GoalCardProps) {
   const navigate = useNavigate();
-  
-  const handleMarkCompleted = useCallback(() => {
-    if (onUpdateStatus && goal.status !== 'completed') {
-      onUpdateStatus(goal.id, 'completed');
-    }
-  }, [goal.id, goal.status, onUpdateStatus]);
 
   const handleView = useCallback(() => {
     navigate(`/app/goal/${goal.id}`);
@@ -35,77 +28,46 @@ export const GoalCard = memo(function GoalCard({ goal, onUpdateStatus, onDelete 
   }, [goal.id, onDelete]);
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300">
+    <Card className="shadow-lg group hover:shadow-xl transition-all duration-300">
       <CardHeader className="pb-4">
-        <div className="flex justify-between items-start mb-2">
-          <Badge
-            className={`text-xs ${getPriorityColor(goal.priority)}`}
-          >
-            {goal.priority} priority
-          </Badge>
-          <Badge variant="outline" className="text-xs">
-            {goal.category}
-          </Badge>
+        <div className="flex flex-col gap-3 mb-4">
+          <div className="flex flex-wrap gap-2">
+            <Badge className={`text-xs ${getPriorityColor(goal.priority)}`}>{goal.priority} priority</Badge>
+            <Badge variant="outline" className="text-xs">{goal.category}</Badge>
+            <Badge variant="outline" className={`text-xs ${getStatusColor(goal.status)}`}>{goal.status.replace("-", " ")}</Badge>
+          </div>
         </div>
-        <CardTitle className="text-lg leading-tight text-card-foreground">
-          {goal.title}
-        </CardTitle>
-        <CardDescription className="text-sm line-clamp-2">
-          {goal.description}
-        </CardDescription>
+        <CardTitle className="text-xl leading-tight text-card-foreground mb-2 line-clamp-1">{goal.title}</CardTitle>
+        <CardDescription className="text-sm leading-relaxed line-clamp-2">{goal.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Separator />
-
-        <div className="flex justify-between items-center text-sm">
-          <div className="flex items-center text-muted-foreground">
-            <Calendar className="mr-1 h-3 w-3" />
-            {formatDeadline(goal.deadline)}
+        <div className="flex justify-between gap-3">
+          <div>
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Deadline</h3>
+            <div className="flex items-center text-sm text-foreground">
+              <Calendar className="mr-2 h-3 w-3" />
+              {formatDeadline(goal.deadline)}
+            </div>
           </div>
-          <div className="flex items-center">
-            <Badge 
-              variant="outline" 
-              className={`text-xs ${getStatusColor(goal.status)}`}
-            >
-              {goal.status.replace("-", " ")}
-            </Badge>
+          <div>
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Created</h3>
+            <p className="text-sm text-foreground">{new Date(goal.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
           </div>
         </div>
-
-        <div className="flex gap-2 pt-2">
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className="flex-1"
-            onClick={handleMarkCompleted}
-            disabled={goal.status === 'completed'}
-          >
-            <CheckCircle2 className="mr-1 h-3 w-3" />
-            Complete
-          </Button>
-        </div>
-        
-        <div className="flex gap-2">
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className="flex-1"
-            onClick={handleView}
-          >
-            <Eye className="mr-1 h-3 w-3" />
-            View
-          </Button>
-          {onDelete && (
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex-1 text-destructive hover:text-destructive"
-              onClick={handleDelete}
-            >
-              <Trash2 className="mr-1 h-3 w-3" />
-              Delete
+        <Separator />
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="flex-1" onClick={handleView}>
+              View
             </Button>
-          )}
+            {onDelete && (
+              <Button size="sm" variant="outline" className="flex-1 text-destructive hover:text-destructive" onClick={handleDelete}>
+                <Trash2 className="mr-1 h-3 w-3" />
+                Delete
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

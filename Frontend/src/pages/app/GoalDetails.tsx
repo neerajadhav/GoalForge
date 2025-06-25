@@ -13,6 +13,7 @@ import type { Goal } from "@/types/goal";
 import { GoalInfoCard } from '@/components/GoalInfoCard';
 import type { Roadmap } from '@/types/roadmap';
 import { RoadmapStepsCard } from '@/components/RoadmapStepsCard';
+import { calculateRoadmapProgress } from "@/utils/roadmapUtils";
 import { goalsService } from "@/services/goalsService";
 import { roadmapService } from '@/services/roadmapService';
 import { useToast } from "@/contexts/ToastContext";
@@ -74,19 +75,28 @@ function GoalDetails() {
     fetchRoadmap();
   }, [id]);
 
-  const handleMarkCompleted = async () => {
-    if (!goal || goal.status === "completed") return;
-
-    try {
-      const response = await goalsService.updateGoalStatus(
-        goal.id,
-        "completed"
-      );
-      setGoal(response.data);
-      addToast({ message: "Goal marked as completed!", type: "success" });
-    } catch (err: any) {
-      const errorMessage = err.message || "Failed to update status";
-      addToast({ message: errorMessage, type: "error" });
+  // Helper to sync goal status with roadmap progress
+  const syncGoalStatusWithProgress = async (roadmapData: Roadmap) => {
+    if (!goal) return;
+    const progress = calculateRoadmapProgress(roadmapData);
+    // Only update if there are steps in the roadmap
+    if (roadmapData.steps.length === 0) return;
+    if (progress === 100 && goal.status !== "completed") {
+      try {
+        const response = await goalsService.updateGoalStatus(goal.id, "completed");
+        setGoal(response.data);
+        addToast({ message: "Goal marked as completed!", type: "success" });
+      } catch (err: any) {
+        addToast({ message: err.message || "Failed to update goal status", type: "error" });
+      }
+    } else if (progress < 100 && goal.status === "completed") {
+      try {
+        const response = await goalsService.updateGoalStatus(goal.id, "in-progress");
+        setGoal(response.data);
+        addToast({ message: "Goal marked as in-progress.", type: "info" });
+      } catch (err: any) {
+        addToast({ message: err.message || "Failed to update goal status", type: "error" });
+      }
     }
   };
 
@@ -113,6 +123,7 @@ function GoalDetails() {
       await roadmapService.updateStep(stepId, { is_completed: !isCompleted });
       const roadmapData = await roadmapService.getRoadmapByGoal(Number(id));
       setRoadmap(roadmapData);
+      await syncGoalStatusWithProgress(roadmapData);
     } catch (err: any) {
       addToast({ message: err.message || "Failed to update step", type: "error" });
     } finally {
@@ -128,6 +139,7 @@ function GoalDetails() {
       const roadmapData = await roadmapService.getRoadmapByGoal(Number(id));
       setRoadmap(roadmapData);
       addToast({ message: "Step deleted", type: "success" });
+      await syncGoalStatusWithProgress(roadmapData);
     } catch (err: any) {
       console.error('Delete step error:', err);
       addToast({ message: err.message || "Failed to delete step", type: "error" });
@@ -151,6 +163,7 @@ function GoalDetails() {
       setStepEditId(null);
       setStepEditTitle("");
       addToast({ message: "Step updated", type: "success" });
+      await syncGoalStatusWithProgress(roadmapData);
     } catch (err: any) {
       addToast({ message: err.message || "Failed to update step", type: "error" });
     } finally {
@@ -167,6 +180,7 @@ function GoalDetails() {
       setRoadmap(roadmapData);
       setNewStepTitle("");
       addToast({ message: "Step added", type: "success" });
+      await syncGoalStatusWithProgress(roadmapData);
     } catch (err: any) {
       addToast({ message: err.message || "Failed to add step", type: "error" });
     } finally {
@@ -255,7 +269,6 @@ function GoalDetails() {
             {goal && (
               <GoalInfoCard
                 goal={goal}
-                onMarkCompleted={handleMarkCompleted}
                 onDelete={handleDelete}
                 addToast={(toast) => addToast({ ...toast, type: toast.type as 'error' | 'success' | 'warning' | 'info' })}
               />
