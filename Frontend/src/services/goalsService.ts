@@ -51,13 +51,6 @@ class GoalsService {
     return response.data;
   }
 
-  async updateGoalProgress(id: number, progress: number): Promise<GoalResponse> {
-    const response = await httpClient.patch<GoalResponse>(
-      `${this.baseUrl}/${id}/progress?progress=${progress}`
-    );
-    return response.data;
-  }
-
   async updateGoalStatus(id: number, status: Goal['status']): Promise<GoalResponse> {
     const response = await httpClient.patch<GoalResponse>(
       `${this.baseUrl}/${id}/status?status=${status}`

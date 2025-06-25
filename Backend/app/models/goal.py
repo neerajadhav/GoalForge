@@ -25,7 +25,6 @@ class Goal(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(200), nullable=False, index=True)
     description = Column(Text, nullable=True)
-    progress = Column(Float, default=0.0)  # 0-100 percentage
     status = Column(SQLEnum(GoalStatus), default=GoalStatus.in_progress)
     category = Column(String(50), nullable=False, index=True)
     deadline = Column(String(10), nullable=True)  # ISO date string format

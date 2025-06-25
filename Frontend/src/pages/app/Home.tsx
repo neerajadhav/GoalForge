@@ -24,7 +24,6 @@ function Goals() {
     isInitialLoading, 
     createGoal, 
     deleteGoal, 
-    updateGoalProgress, 
     updateGoalStatus 
   } = useGoals({ ...filters, search: debouncedSearchTerm });
   const { stats, loading: statsLoading } = useGoalStats();
@@ -69,7 +68,6 @@ function Goals() {
         <GoalsGrid 
           goals={goals} 
           loading={isInitialLoading}
-          onUpdateProgress={updateGoalProgress}
           onUpdateStatus={updateGoalStatus}
           onDelete={handleDeleteGoal}
         />

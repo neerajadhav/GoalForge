@@ -28,7 +28,6 @@ Create a new goal for the authenticated user.
 {
   "title": "Complete React Certification",
   "description": "Finish the advanced React course and pass the certification exam",
-  "progress": 0.0,
   "status": "in-progress",
   "category": "Learning",
   "deadline": "2025-08-15",
@@ -43,7 +42,6 @@ Create a new goal for the authenticated user.
     "id": 1,
     "title": "Complete React Certification",
     "description": "Finish the advanced React course and pass the certification exam",
-    "progress": 0.0,
     "status": "in-progress",
     "category": "Learning",
     "deadline": "2025-08-15",
@@ -106,7 +104,6 @@ Update a specific goal for the authenticated user.
 {
   "title": "Updated title",
   "description": "Updated description",
-  "progress": 50.0,
   "status": "in-progress",
   "category": "Learning",
   "deadline": "2025-08-15",
@@ -126,15 +123,7 @@ Delete a specific goal for the authenticated user.
 }
 ```
 
-### 6. Update Goal Progress
-**PATCH** `/api/goals/{goal_id}/progress`
-
-Update only the progress of a specific goal.
-
-**Query Parameters:**
-- `progress` (float, required): Progress percentage (0.0 - 100.0)
-
-### 7. Update Goal Status
+### 6. Update Goal Status
 **PATCH** `/api/goals/{goal_id}/status`
 
 Update only the status of a specific goal.
@@ -142,7 +131,7 @@ Update only the status of a specific goal.
 **Query Parameters:**
 - `status` (string, required): New status
 
-### 8. Get Goal Statistics
+### 7. Get Goal Statistics
 **GET** `/api/goals/stats`
 
 Get goal statistics for the authenticated user.
@@ -154,8 +143,7 @@ Get goal statistics for the authenticated user.
     "total_goals": 10,
     "completed_goals": 3,
     "in_progress_goals": 5,
-    "overdue_goals": 1,
-    "average_progress": 65.5
+    "overdue_goals": 1
   },
   "message": "Stats retrieved successfully"
 }
@@ -223,12 +211,6 @@ curl -X POST "http://localhost:8000/api/goals" \
 ### 3. Get all goals
 ```bash
 curl -X GET "http://localhost:8000/api/goals" \
-  -H "Authorization: Bearer <your_token>"
-```
-
-### 4. Update goal progress
-```bash
-curl -X PATCH "http://localhost:8000/api/goals/1/progress?progress=75.0" \
   -H "Authorization: Bearer <your_token>"
 ```
 

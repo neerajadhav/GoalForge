@@ -91,13 +91,9 @@ def get_goal_stats(db: Session, user_id: int) -> dict:
     in_progress_goals = user_goals.filter(Goal.status == "in-progress").count()
     overdue_goals = user_goals.filter(Goal.status == "overdue").count()
     
-    # Calculate average progress
-    avg_progress = db.query(func.avg(Goal.progress)).filter(Goal.user_id == user_id).scalar() or 0.0
-    
     return {
         "total_goals": total_goals,
         "completed_goals": completed_goals,
         "in_progress_goals": in_progress_goals,
         "overdue_goals": overdue_goals,
-        "average_progress": round(avg_progress, 2)
     }

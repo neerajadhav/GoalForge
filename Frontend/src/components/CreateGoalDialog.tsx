@@ -20,7 +20,6 @@ export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoa
     description: '',
     category: '',
     priority: 'medium',
-    progress: 0,
     status: 'in-progress'
   });
   const [loading, setLoading] = useState(false);
@@ -41,7 +40,6 @@ export function CreateGoalDialog({ open, onOpenChange, onCreateGoal }: CreateGoa
         description: '',
         category: '',
         priority: 'medium',
-        progress: 0,
         status: 'in-progress'
       });
       onOpenChange(false);

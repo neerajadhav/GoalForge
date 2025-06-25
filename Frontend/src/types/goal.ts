@@ -2,7 +2,6 @@ export interface Goal {
   id: number;
   title: string;
   description: string;
-  progress: number;
   status: 'completed' | 'on-track' | 'in-progress' | 'overdue' | 'paused';
   category: string;
   deadline: string;
@@ -14,7 +13,6 @@ export interface Goal {
 export interface CreateGoalRequest {
   title: string;
   description: string;
-  progress?: number;
   status?: Goal['status'];
   category: string;
   deadline?: string;
@@ -24,7 +22,6 @@ export interface CreateGoalRequest {
 export interface UpdateGoalRequest {
   title?: string;
   description?: string;
-  progress?: number;
   status?: Goal['status'];
   category?: string;
   deadline?: string;
@@ -57,7 +54,6 @@ export interface GoalStatsResponse {
     completed_goals: number;
     in_progress_goals: number;
     overdue_goals: number;
-    average_progress: number;
   };
   message: string;
 }

@@ -114,22 +114,6 @@ def delete_goal_by_id(
     return {"message": "Goal deleted successfully"}
 
 
-@router.patch("/{goal_id}/progress")
-def update_goal_progress(
-    goal_id: int, 
-    progress: float = Query(..., ge=0.0, le=100.0, description="Progress percentage"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
-):
-    """Update only the progress of a specific goal for the authenticated user."""
-    goal_update = GoalUpdate(progress=progress)
-    db_goal = update_goal(db=db, goal_id=goal_id, user_id=current_user.id, goal_update=goal_update)
-    if not db_goal:
-        raise HTTPException(status_code=404, detail="Goal not found")
-    
-    return GoalResponse(data=db_goal, message="Goal progress updated successfully")
-
-
 @router.patch("/{goal_id}/status")
 def update_goal_status(
     goal_id: int,

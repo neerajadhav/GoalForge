@@ -18,7 +18,6 @@ mock_goals_data = [
     {
         "title": "Complete React Certification",
         "description": "Finish the advanced React course and pass the certification exam",
-        "progress": 75.0,
         "status": "in-progress",
         "category": "Learning",
         "deadline": "2025-08-15",
@@ -27,7 +26,6 @@ mock_goals_data = [
     {
         "title": "Read 12 Books This Year",
         "description": "Read one book per month to expand knowledge and vocabulary",
-        "progress": 45.0,
         "status": "in-progress",
         "category": "Personal",
         "deadline": "2025-12-31",
@@ -36,7 +34,6 @@ mock_goals_data = [
     {
         "title": "Launch Side Project",
         "description": "Build and deploy a full-stack web application",
-        "progress": 30.0,
         "status": "in-progress",
         "category": "Career",
         "deadline": "2025-09-30",
@@ -45,7 +42,6 @@ mock_goals_data = [
     {
         "title": "Exercise Regularly",
         "description": "Work out at least 3 times per week",
-        "progress": 90.0,
         "status": "on-track",
         "category": "Health",
         "deadline": "2025-12-31",
@@ -101,7 +97,7 @@ def populate_database():
         goals = db.query(Goal).filter(Goal.user_id == test_user.id).all()
         print(f"\nCreated goals for user {test_user.username}:")
         for goal in goals:
-            print(f"- {goal.id}: {goal.title} ({goal.status}) - {goal.progress}%")
+            print(f"- {goal.id}: {goal.title} ({goal.status})")
             
         print(f"\nTest user credentials:")
         print(f"Email: test@example.com")

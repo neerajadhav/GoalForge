@@ -15,7 +15,6 @@ export function convertBackendStats(backendStats: {
   completed_goals: number;
   in_progress_goals: number;
   overdue_goals: number;
-  average_progress: number;
 }): GoalStats {
   return {
     total: backendStats.total_goals,

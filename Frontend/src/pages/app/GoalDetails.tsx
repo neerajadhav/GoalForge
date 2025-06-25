@@ -4,7 +4,6 @@ import {
   CheckCircle2,
   Edit,
   Trash2,
-  TrendingUp,
 } from "lucide-react";
 import {
   Card,
@@ -24,7 +23,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Goal } from "@/types/goal";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { goalsService } from "@/services/goalsService";
 import { useToast } from "@/contexts/ToastContext";
@@ -61,23 +59,6 @@ function GoalDetails() {
 
     fetchGoal();
   }, [id, addToast]);
-
-  const handleProgressIncrement = async () => {
-    if (!goal || goal.progress >= 100) return;
-
-    try {
-      const newProgress = Math.min(goal.progress + 10, 100);
-      const response = await goalsService.updateGoalProgress(
-        goal.id,
-        newProgress
-      );
-      setGoal(response.data);
-      addToast({ message: "Progress updated successfully", type: "success" });
-    } catch (err: any) {
-      const errorMessage = err.message || "Failed to update progress";
-      addToast({ message: errorMessage, type: "error" });
-    }
-  };
 
   const handleMarkCompleted = async () => {
     if (!goal || goal.status === "completed") return;
@@ -205,19 +186,6 @@ function GoalDetails() {
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Progress Section */}
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-foreground">
-                      Progress
-                    </span>
-                    <span className="text-sm font-semibold text-foreground">
-                      {goal.progress}%
-                    </span>
-                  </div>
-                  <Progress value={goal.progress} className="h-2" />
-                </div>
-
                 <Separator />
 
                 {/* Goal Info */}
@@ -251,16 +219,6 @@ function GoalDetails() {
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1"
-                      onClick={handleProgressIncrement}
-                      disabled={goal.progress >= 100}
-                    >
-                      <TrendingUp className="mr-1 h-3 w-3" />
-                      +10%
-                    </Button>
                     <Button
                       size="sm"
                       variant="outline"
@@ -363,7 +321,7 @@ function GoalDetails() {
                 <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
                   <div className="max-w-md mx-auto">
                     <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                      <TrendingUp className="h-8 w-8 text-muted-foreground" />
+                      <CheckCircle2 className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <h3 className="text-lg font-semibold mb-2">
                       Your AI Roadmap Will Appear Here

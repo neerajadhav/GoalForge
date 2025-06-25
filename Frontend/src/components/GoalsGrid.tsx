@@ -5,7 +5,6 @@ import { memo } from "react";
 interface GoalsGridProps {
   goals: Goal[];
   loading?: boolean;
-  onUpdateProgress?: (id: number, progress: number) => void;
   onUpdateStatus?: (id: number, status: Goal['status']) => void;
   onDelete?: (id: number) => void;
 }
@@ -13,7 +12,6 @@ interface GoalsGridProps {
 export const GoalsGrid = memo(function GoalsGrid({ 
   goals, 
   loading, 
-  onUpdateProgress, 
   onUpdateStatus, 
   onDelete 
 }: GoalsGridProps) {
@@ -44,7 +42,6 @@ export const GoalsGrid = memo(function GoalsGrid({
         <GoalCard 
           key={goal.id} 
           goal={goal} 
-          onUpdateProgress={onUpdateProgress}
           onUpdateStatus={onUpdateStatus}
           onDelete={onDelete}
         />

@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle2, Eye, Trash2, TrendingUp } from "lucide-react";
+import { Calendar, CheckCircle2, Eye, Trash2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDeadline, getPriorityColor, getStatusColor } from "@/utils/goalUtils";
 import { memo, useCallback } from "react";
@@ -6,40 +6,23 @@ import { memo, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Goal } from "@/types/goal";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 
 interface GoalCardProps {
   goal: Goal;
-  onUpdateProgress?: (id: number, progress: number) => void;
   onUpdateStatus?: (id: number, status: Goal['status']) => void;
   onDelete?: (id: number) => void;
 }
 
-export const GoalCard = memo(function GoalCard({ goal, onUpdateProgress, onUpdateStatus, onDelete }: GoalCardProps) {
+export const GoalCard = memo(function GoalCard({ goal, onUpdateStatus, onDelete }: GoalCardProps) {
   const navigate = useNavigate();
   
   const handleMarkCompleted = useCallback(() => {
     if (onUpdateStatus && goal.status !== 'completed') {
       onUpdateStatus(goal.id, 'completed');
-      if (onUpdateProgress) {
-        onUpdateProgress(goal.id, 100);
-      }
     }
-  }, [goal.id, goal.status, onUpdateProgress, onUpdateStatus]);
-
-  const handleProgressIncrement = useCallback(() => {
-    if (onUpdateProgress && goal.progress < 100) {
-      const newProgress = Math.min(goal.progress + 10, 100);
-      onUpdateProgress(goal.id, newProgress);
-      
-      // Auto-update status if completed
-      if (newProgress === 100 && onUpdateStatus && goal.status !== 'completed') {
-        onUpdateStatus(goal.id, 'completed');
-      }
-    }
-  }, [goal.id, goal.progress, goal.status, onUpdateProgress, onUpdateStatus]);
+  }, [goal.id, goal.status, onUpdateStatus]);
 
   const handleView = useCallback(() => {
     navigate(`/app/goal/${goal.id}`);
@@ -72,18 +55,6 @@ export const GoalCard = memo(function GoalCard({ goal, onUpdateProgress, onUpdat
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-foreground">
-              Progress
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {goal.progress}%
-            </span>
-          </div>
-          <Progress value={goal.progress} className="h-2" />
-        </div>
-
         <Separator />
 
         <div className="flex justify-between items-center text-sm">
@@ -102,16 +73,6 @@ export const GoalCard = memo(function GoalCard({ goal, onUpdateProgress, onUpdat
         </div>
 
         <div className="flex gap-2 pt-2">
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className="flex-1"
-            onClick={handleProgressIncrement}
-            disabled={goal.progress >= 100}
-          >
-            <TrendingUp className="mr-1 h-3 w-3" />
-            +10%
-          </Button>
           <Button 
             size="sm" 
             variant="outline" 

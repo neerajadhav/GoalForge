@@ -87,21 +87,6 @@ export function useGoals(filters?: GoalFilters) {
     }
   }, [addToast]);
 
-  const updateGoalProgress = useCallback(async (id: number, progress: number) => {
-    try {
-      const response = await goalsService.updateGoalProgress(id, progress);
-      setGoals(prev => prev.map(goal => 
-        goal.id === id ? response.data : goal
-      ));
-      addToast({ message: 'Progress updated successfully', type: 'success' });
-      return response.data;
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to update progress';
-      addToast({ message: errorMessage, type: 'error' });
-      throw err;
-    }
-  }, [addToast]);
-
   const updateGoalStatus = useCallback(async (id: number, status: Goal['status']) => {
     try {
       const response = await goalsService.updateGoalStatus(id, status);
@@ -143,7 +128,6 @@ export function useGoals(filters?: GoalFilters) {
     createGoal,
     updateGoal,
     deleteGoal,
-    updateGoalProgress,
     updateGoalStatus,
     refreshGoals,
     fetchGoals: () => fetchGoals(true)
