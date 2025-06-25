@@ -10,6 +10,10 @@ from app.schemas.roadmap import (
     RoadmapStep, RoadmapStepCreate, RoadmapStepUpdate
 )
 from app.crud.roadmap import roadmap_crud, roadmap_step_crud
+from app.crud.goal import get_goal
+from app.models.generative import generate_text
+from app.schemas.roadmap import RoadmapStepCreate
+import json
 
 router = APIRouter(prefix="/roadmaps", tags=["roadmaps"])
 
@@ -203,3 +207,51 @@ def reorder_roadmap_steps(
             detail="Failed to reorder steps or roadmap not found"
         )
     return {"message": "Steps reordered successfully"}
+
+
+@router.post("/generate/{goal_id}", response_model=Roadmap, status_code=status.HTTP_201_CREATED)
+def generate_roadmap_for_goal(
+    goal_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Generate a roadmap for a goal using Gemini API and user's API key."""
+    # Fetch the goal for the user
+    goal = get_goal(db, goal_id, current_user.id)
+    if not goal:
+        raise HTTPException(status_code=404, detail="Goal not found")
+
+    # Prepare prompt for Gemini
+    prompt = f"""
+    Given the following goal details, generate a step-by-step roadmap to achieve it. 
+    Return the result as a JSON array of steps, each with a 'title' and 'description'.
+    
+    Goal Title: {goal.title}
+    Description: {goal.description or ''}
+    Category: {goal.category}
+    Priority: {goal.priority}
+    Deadline: {goal.deadline or 'None'}
+    """
+
+    # Call Gemini API
+    try:
+        result = generate_text(prompt, db, current_user.id)
+        # Expecting result['text'] to be a JSON array of steps
+        steps_data = json.loads(result['text'])
+        if not isinstance(steps_data, list):
+            raise ValueError("Gemini response is not a list")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gemini generation failed: {str(e)}")
+
+    # Build RoadmapCreate and steps
+    roadmap_in = RoadmapCreate(
+        title=f"Roadmap for: {goal.title}",
+        description=f"Auto-generated roadmap for goal '{goal.title}'",
+        steps=[RoadmapStepCreate(**step) for step in steps_data]
+    )
+
+    # Use existing CRUD to create roadmap
+    db_roadmap = roadmap_crud.create_roadmap(db, roadmap_in, goal_id, current_user.id)
+    if not db_roadmap:
+        raise HTTPException(status_code=400, detail="Roadmap already exists or failed to create")
+    return db_roadmap
