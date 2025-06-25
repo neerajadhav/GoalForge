@@ -12,7 +12,6 @@ interface GoalsGridProps {
 export const GoalsGrid = memo(function GoalsGrid({ 
   goals, 
   loading, 
-  onUpdateStatus, 
   onDelete 
 }: GoalsGridProps) {
   if (loading) {

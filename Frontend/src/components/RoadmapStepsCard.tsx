@@ -6,12 +6,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CheckCircle2, Edit, PlusCircle, Trash2, X } from "lucide-react";
-import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { Roadmap } from "@/types/roadmap";
 import { StepDialog } from "@/components/StepDialog";
 import { calculateRoadmapProgress } from "@/utils/roadmapUtils";
+import { useState } from "react";
 
 interface RoadmapStepsCardProps {
   roadmap: Roadmap | null;
@@ -51,7 +51,6 @@ export function RoadmapStepsCard({
   stepEditTitle,
   newStepTitle,
   onToggleStep,
-  onEditStep,
   onSaveStep,
   onDeleteStep,
   onAddStep,
@@ -59,9 +58,7 @@ export function RoadmapStepsCard({
   setStepEditTitle,
   setStepEditId,
   setNewStepTitle,
-  newStepDescription,
   setNewStepDescription,
-  stepEditDescription,
   setStepEditDescription,
   onAddStepWithDescription,
   onSaveStepWithDescription,
