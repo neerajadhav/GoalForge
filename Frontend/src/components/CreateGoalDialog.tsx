@@ -110,6 +110,7 @@ export function CreateGoalDialog({ open, onOpenChange, onCreateGoal, initialData
               <Input 
                 id="deadline" 
                 type="date" 
+                min={new Date().toISOString().split('T')[0]}
                 value={formData.deadline || ''}
                 onChange={(e) => handleInputChange('deadline', e.target.value)}
               />
