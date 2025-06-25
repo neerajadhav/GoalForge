@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle2, Edit, PlusCircle, Trash2 } from "lucide-react";
+import { CheckCircle2, Edit, PlusCircle, Trash2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { Roadmap } from "@/types/roadmap";
@@ -132,7 +132,7 @@ export function RoadmapStepsCard({
                     <div className="flex-1">
                       {stepEditId === step.id ? (
                         <input
-                          className="w-full border px-3 py-1 rounded text-sm"
+                          className="w-full border bg-primary-foreground px-3 py-1 rounded text-sm"
                           value={stepEditTitle}
                           onChange={(e) => setStepEditTitle(e.target.value)}
                           disabled={stepLoading === step.id}
@@ -156,8 +156,10 @@ export function RoadmapStepsCard({
                       <>
                         <Button
                           size="icon"
+                          variant={"ghost"}
                           onClick={() => onSaveStep(step.id)}
                           disabled={stepLoading === step.id}
+                          className="cursor-pointer"
                         >
                           <CheckCircle2 className="w-4 h-4 text-green-600" />
                         </Button>
@@ -166,8 +168,10 @@ export function RoadmapStepsCard({
                           variant="ghost"
                           onClick={() => setStepEditId(null)}
                           disabled={stepLoading === step.id}
+                          className="cursor-pointer"
                         >
-                          <Trash2 className="w-4 h-4 text-destructive" />
+                          <span className="sr-only">Cancel</span>
+                          <X className="w-4 h-4 text-muted-foreground" />
                         </Button>
                       </>
                     ) : (
