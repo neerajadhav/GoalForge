@@ -4,7 +4,7 @@ import { CreateGoalDialog } from "@/components/CreateGoalDialog";
 import type { GoalFilters } from "@/types/goal";
 import { GoalsGrid } from "@/components/GoalsGrid";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
-import { StatsGrid } from "@/components/StatsGrid";
+// import { StatsGrid } from "@/components/StatsGrid";
 import { WelcomeHeader } from "@/components/WelcomeHeader";
 import { useAuth } from "../../contexts/AuthContext";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -26,7 +26,7 @@ function Goals() {
     deleteGoal, 
     updateGoalStatus 
   } = useGoals({ ...filters, search: debouncedSearchTerm });
-  const { stats, loading: statsLoading } = useGoalStats();
+  // const { stats, loading: statsLoading } = useGoalStats();
 
   const handleCreateGoal = async (goalData: any) => {
     await createGoal(goalData);
@@ -47,7 +47,7 @@ function Goals() {
       <div className="container mx-auto px-4 py-4">
         <WelcomeHeader username={user?.username} />
 
-        <StatsGrid stats={stats} loading={statsLoading} />
+        {/* <StatsGrid stats={stats} loading={statsLoading} /> */}
 
         <CreateGoalDialog 
           open={showAddGoal} 

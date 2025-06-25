@@ -49,6 +49,7 @@ export function GoalInfoCard({
   addToast,
 }: GoalInfoCardProps) {
   const [editOpen, setEditOpen] = useState(false);
+  const [descCollapsed, setDescCollapsed] = useState(true);
 
   return (
     <>
@@ -76,17 +77,56 @@ export function GoalInfoCard({
           <CardTitle className="text-xl leading-tight text-card-foreground mb-2">
             {goal.title}
           </CardTitle>
-          <CardDescription className="text-sm leading-relaxed">
+          <div className="relative">
             {goal.description && (
-              <p
-                className="text-sm text-foreground mt-1"
-                style={{ whiteSpace: "pre-line" }}
-                dangerouslySetInnerHTML={{
-                  __html: renderDescriptionWithMarkdown(goal.description),
+              <div
+                className={`overflow-hidden rounded-lg border border-border/40 shadow-inner bg-transparent group transition-all duration-500 ${
+                  descCollapsed ? "max-h-24" : "max-h-[1000px]"
+                }`}
+                style={{
+                  position: "relative",
+                  paddingBottom: descCollapsed ? undefined : "25px",
                 }}
-              />
+              >
+                <p
+                  className="text-sm text-foreground mt-1 px-3 py-2 font-medium tracking-tight"
+                  style={{ whiteSpace: "pre-line", letterSpacing: "0.01em" }}
+                  dangerouslySetInnerHTML={{
+                    __html: renderDescriptionWithMarkdown(goal.description),
+                  }}
+                />
+                {descCollapsed && (
+                  <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-background/90 to-transparent pointer-events-none rounded-b-lg transition-opacity duration-500 opacity-100" />
+                )}
+                {!descCollapsed && (
+                  <div className="absolute bottom-0 left-0 w-full h-10 pointer-events-none rounded-b-lg transition-opacity duration-500 opacity-0" />
+                )}
+                {/* Collapse/Expand Bar */}
+                <button
+                  className="w-full flex items-center justify-center gap-2 px-0 py-1 text-xs font-semibold text-primary bg-background/90 border-t border-border/60 shadow-sm rounded-b-lg cursor-pointer hover:bg-accent hover:text-accent-foreground transition-all duration-200 focus:outline-none"
+                  style={{ position: "absolute", left: 0, bottom: 0, zIndex: 40 }}
+                  onClick={() => setDescCollapsed((c) => !c)}
+                  aria-label={
+                    descCollapsed ? "Expand description" : "Collapse description"
+                  }
+                >
+                  <span
+                    className="transition-transform duration-300"
+                    style={{
+                      transform: descCollapsed
+                        ? "rotate(0deg)"
+                        : "rotate(180deg)",
+                    }}
+                  >
+                    ▼
+                  </span>
+                  <span className="ml-1">
+                    {descCollapsed ? "Show more" : "Show less"}
+                  </span>
+                </button>
+              </div>
             )}
-          </CardDescription>
+          </div>
         </CardHeader>
         <Separator />
         <CardContent className="space-y-4">
