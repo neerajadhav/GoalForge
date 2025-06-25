@@ -214,19 +214,32 @@ function GoalDetails() {
       .finally(() => setStepLoading(null));
   };
 
-  const handleAddRoadmap = async () => {
+  const handleGenerateRoadmap = async () => {
     if (!id) return;
     setRoadmapLoading(true);
     setRoadmapError(null);
     try {
-      const newRoadmap = await roadmapService.createRoadmap(Number(id), { title: "My Roadmap", description: "", steps: [] });
-      setRoadmap(newRoadmap);
-      addToast({ message: "Blank roadmap created!", type: "success" });
+      const generatedRoadmap = await roadmapService.generateRoadmap(Number(id));
+      setRoadmap(generatedRoadmap);
+      addToast({ message: "Roadmap generated!", type: "success" });
     } catch (err: any) {
-      setRoadmapError(err.message || "Failed to create roadmap");
-      addToast({ message: err.message || "Failed to create roadmap", type: "error" });
+      setRoadmapError(err.message || "Failed to generate roadmap");
+      addToast({ message: err.message || "Failed to generate roadmap", type: "error" });
     } finally {
       setRoadmapLoading(false);
+    }
+  };
+
+  const handleDeleteRoadmap = async () => {
+    if (!roadmap) return;
+    if (window.confirm("Are you sure you want to delete this roadmap? This cannot be undone.")) {
+      try {
+        await roadmapService.deleteRoadmap(roadmap.id);
+        setRoadmap(null);
+        addToast({ message: "Roadmap deleted successfully", type: "success" });
+      } catch (err: any) {
+        addToast({ message: err.message || "Failed to delete roadmap", type: "error" });
+      }
     }
   };
 
@@ -300,7 +313,7 @@ function GoalDetails() {
               onSaveStep={handleSaveStep}
               onDeleteStep={handleDeleteStep}
               onAddStep={handleAddStep}
-              onAddRoadmap={handleAddRoadmap}
+              onAddRoadmap={handleGenerateRoadmap}
               setStepEditTitle={setStepEditTitle}
               setStepEditId={setStepEditId}
               setNewStepTitle={setNewStepTitle}
@@ -310,6 +323,7 @@ function GoalDetails() {
               setStepEditDescription={setStepEditDescription}
               onAddStepWithDescription={handleAddStepWithDescription}
               onSaveStepWithDescription={handleSaveStepWithDescription}
+              onDeleteRoadmap={handleDeleteRoadmap}
             />
           </div>
         </div>

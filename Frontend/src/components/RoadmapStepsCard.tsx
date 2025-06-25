@@ -40,6 +40,7 @@ interface RoadmapStepsCardProps {
     title: string,
     description: string
   ) => void;
+  onDeleteRoadmap?: () => void;
 }
 
 export function RoadmapStepsCard({
@@ -62,6 +63,7 @@ export function RoadmapStepsCard({
   setStepEditDescription,
   onAddStepWithDescription,
   onSaveStepWithDescription,
+  onDeleteRoadmap,
 }: RoadmapStepsCardProps) {
   // Modal state for add/edit
   const [stepDialogOpen, setStepDialogOpen] = useState(false);
@@ -130,7 +132,7 @@ export function RoadmapStepsCard({
               size="sm"
               disabled={stepLoading === -1}
             >
-              Create Roadmap
+              Generate Roadmap
             </Button>
           </div>
         ) : roadmap ? (
@@ -277,7 +279,17 @@ export function RoadmapStepsCard({
               ))}
             </div>
             {/* Add Step Button */}
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex justify-between items-center gap-2 pt-2">
+              {/* Delete Roadmap Button */}
+              {onDeleteRoadmap && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={onDeleteRoadmap}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" /> Delete Roadmap
+                </Button>
+              )}
               <Button
                 size="sm"
                 onClick={handleOpenAddStep}

@@ -14,6 +14,8 @@ from app.crud.goal import get_goal
 from app.models.generative import generate_text
 from app.schemas.roadmap import RoadmapStepCreate
 import json
+import re
+from datetime import date
 
 router = APIRouter(prefix="/roadmaps", tags=["roadmaps"])
 
@@ -228,18 +230,88 @@ def generate_roadmap_for_goal(
     if not goal:
         raise HTTPException(status_code=404, detail="Goal not found")
 
+    today_str = date.today().isoformat()
+    deadline_str = str(goal.deadline) if goal.deadline else 'No deadline specified'
     # Prepare prompt for Gemini
     prompt = f"""
-    You are an expert productivity and learning coach.\n\nGiven the following goal details, generate a detailed and actionable step-by-step roadmap to achieve the goal. \nYour response should be a JSON array where each item is an object with the following keys:\n- 'title': a short, clear summary of the step\n- 'description': a concise but helpful explanation of what needs to be done in that step\n\nInstructions for roadmap generation:\n    1. Break down the goal into logical, progressive steps.\n    2. Ensure each step builds on the previous one and leads toward the final outcome.\n    3. Incorporate best practices from the relevant field (e.g., programming, design, writing).\n    4. Tailor the roadmap according to the user's priority and deadline. If a deadline is provided, distribute the steps realistically across the available time.\n    5. Include milestones and checkpoints where applicable.\n    6. Focus on practical execution—suggest resources, tools, or actions that help achieve each step.\n\nGoal Details:\n- Goal Title: {goal.title}\n- Description: {goal.description or 'No additional description provided.'}\n- Category: {goal.category}\n- Priority Level: {goal.priority}\n- Deadline: {goal.deadline or 'No deadline specified'}\n\nReturn the output in the following format (as JSON):\n[\n{{\n    "title": "Step 1 Title",\n    "description": "Step 1 detailed description"\n}},\n...\n]\n"""
+    You are an expert productivity and learning coach.
+
+    Given the following goal details, generate a detailed and actionable step-by-step roadmap to achieve the goal. 
+    Your response should be a JSON array where each item is an object with the following keys:
+    - 'title': a short, clear summary of the step
+    - 'description': a concise but helpful explanation of what needs to be done in that step
+
+    Instructions for roadmap generation:
+        1. Break down the goal into logical, progressive steps.
+        2. Ensure each step builds on the previous one and leads toward the final outcome.
+        3. Incorporate best practices from the relevant field (e.g., programming, design, writing).
+        4. Strictly design the roadmap so that all steps are distributed within the date range from today ({today_str}) to the deadline ({deadline_str}). Do not exceed the deadline.
+        5. If a deadline is provided, distribute the steps realistically and evenly across the available time.
+        6. Include milestones and checkpoints where applicable.
+        7. Focus on practical execution—suggest resources, tools, or actions that help achieve each step.
+
+    Formatting instructions:
+    - The 'description' field supports markdown formatting. You may use *italic*, **bold**, and line breaks (blank lines) for clarity.
+    - You can also combine **bold and *italic* together**.
+    - Line breaks in your response will be preserved.
+
+    Example description:
+    This is a step description.
+
+    It supports *italic* and **bold** text.
+
+    You can also combine **bold and *italic* together**.
+
+    Line breaks
+
+    are preserved.
+
+    Goal Details:
+    - Goal Title: {goal.title}
+    - Description: {goal.description or 'No additional description provided.'}
+    - Category: {goal.category}
+    - Priority Level: {goal.priority}
+    - Today's Date: {today_str}
+    - Deadline: {deadline_str}
+
+    Return the output in the following format (as JSON):
+    [
+    {{
+        "title": "Step 1 Title",
+        "description": "Step 1 detailed description"
+    }},
+    ...
+    ]
+    """
 
     # Call Gemini API
+    import traceback
+    import re
     try:
         result = generate_text(prompt, db, current_user.id)
-        # Expecting result['text'] to be a JSON array of steps
-        steps_data = json.loads(result['text'])
-        if not isinstance(steps_data, list):
-            raise ValueError("Gemini response is not a list")
+        print("Gemini raw result:", repr(result['text']))  # Debug Gemini output
+        # Clean Gemini response: robustly strip markdown code fences and language tags
+        raw = result['text']
+        print(f"Gemini raw result: {repr(raw)}")
+        cleaned = raw.strip()
+        # Remove code fences if present
+        if cleaned.startswith('```'):
+            # Remove the first line (``` or ```json) and the last line (```)
+            lines = cleaned.splitlines()
+            if len(lines) >= 3 and lines[0].startswith('```') and lines[-1].startswith('```'):
+                cleaned = '\n'.join(lines[1:-1])
+            else:
+                # fallback: remove all code fences using regex
+                cleaned = re.sub(r'^```[a-zA-Z]*\n|\n```$', '', cleaned)
+        print(f"Gemini cleaned result: {repr(cleaned)}")
+        try:
+            steps_data = json.loads(cleaned)
+        except Exception as e:
+            print(f"Gemini generation failed: {type(e).__name__}({repr(e)})")
+            raise
     except Exception as e:
+        print("Gemini generation failed:", repr(e))
+        print(traceback.format_exc())
         raise HTTPException(
             status_code=500, detail=f"Gemini generation failed: {str(e)}")
 

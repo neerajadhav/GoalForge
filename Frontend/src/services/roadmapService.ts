@@ -52,6 +52,11 @@ class RoadmapService {
   async deleteStep(stepId: number): Promise<void> {
     await httpClient.delete(`${this.baseUrl}/steps/${stepId}`);
   }
+
+  async generateRoadmap(goalId: number): Promise<Roadmap> {
+    const response = await httpClient.post<Roadmap>(`${this.baseUrl}/generate/${goalId}`);
+    return response.data;
+  }
 }
 
 export const roadmapService = new RoadmapService();
