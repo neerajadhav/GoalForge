@@ -6,9 +6,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CheckCircle2, Edit, PlusCircle, Trash2, X } from "lucide-react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { Roadmap } from "@/types/roadmap";
+import { StepDialog } from "@/components/StepDialog";
 import { calculateRoadmapProgress } from "@/utils/roadmapUtils";
 
 interface RoadmapStepsCardProps {
@@ -28,6 +30,12 @@ interface RoadmapStepsCardProps {
   setStepEditTitle: (title: string) => void;
   setStepEditId: (id: number | null) => void;
   setNewStepTitle: (title: string) => void;
+  newStepDescription: string;
+  setNewStepDescription: (desc: string) => void;
+  stepEditDescription: string;
+  setStepEditDescription: (desc: string) => void;
+  onAddStepWithDescription?: (title: string, description: string) => void;
+  onSaveStepWithDescription?: (stepId: number, title: string, description: string) => void;
 }
 
 export function RoadmapStepsCard({
@@ -47,7 +55,37 @@ export function RoadmapStepsCard({
   setStepEditTitle,
   setStepEditId,
   setNewStepTitle,
+  newStepDescription,
+  setNewStepDescription,
+  stepEditDescription,
+  setStepEditDescription,
+  onAddStepWithDescription,
+  onSaveStepWithDescription,
 }: RoadmapStepsCardProps) {
+  // Modal state for add/edit
+  const [stepDialogOpen, setStepDialogOpen] = useState(false);
+  const [stepDialogMode, setStepDialogMode] = useState<'add' | 'edit'>("add");
+  const [editingStepId, setEditingStepId] = useState<number | null>(null);
+  const [stepDialogInitialTitle, setStepDialogInitialTitle] = useState("");
+  const [stepDialogInitialDescription, setStepDialogInitialDescription] = useState("");
+
+  // Replace add step input with modal
+  const handleOpenAddStep = () => {
+    setStepDialogMode("add");
+    setStepDialogInitialTitle("");
+    setStepDialogInitialDescription("");
+    setNewStepDescription("");
+    setStepDialogOpen(true);
+  };
+  const handleOpenEditStep = (stepId: number, currentTitle: string, currentDescription?: string) => {
+    setStepDialogMode("edit");
+    setEditingStepId(stepId);
+    setStepDialogInitialTitle(currentTitle);
+    setStepDialogInitialDescription(currentDescription || "");
+    setStepEditDescription(currentDescription || "");
+    setStepDialogOpen(true);
+  };
+
   return (
     <Card className="h-full shadow-lg">
       <CardHeader className="space-y-1">
@@ -108,14 +146,6 @@ export function RoadmapStepsCard({
                   }}
                 >
                   <div className="flex items-center gap-3 w-full">
-                    {/* <input
-                      type="checkbox"
-                      checked={step.is_completed}
-                      disabled={stepLoading === step.id}
-                      onChange={() => onToggleStep(step.id, step.is_completed)}
-                      className="mt-1 accent-blue-500"
-                      onClick={(e) => e.stopPropagation()} // Prevent parent click
-                    /> */}
                     <Button
                       variant={"default"}
                       size="icon"
@@ -139,15 +169,22 @@ export function RoadmapStepsCard({
                           onClick={(e) => e.stopPropagation()} // Prevent parent click
                         />
                       ) : (
-                        <p
-                          className={`text-sm ${
-                            step.is_completed
-                              ? "line-through text-muted-foreground"
-                              : "text-foreground"
-                          }`}
-                        >
-                          {step.title}
-                        </p>
+                        <div>
+                          <p
+                            className={`text-sm ${
+                              step.is_completed
+                                ? "line-through text-muted-foreground"
+                                : "text-foreground"
+                            }`}
+                          >
+                            {step.title}
+                          </p>
+                          {step.description && (
+                            <p className="text-xs text-muted-foreground mt-1 ml-1">
+                              {step.description}
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -181,7 +218,7 @@ export function RoadmapStepsCard({
                           variant="ghost"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onEditStep(step.id, step.title);
+                            handleOpenEditStep(step.id, step.title, step.description);
                           }}
                           disabled={stepLoading === step.id}
                         >
@@ -205,25 +242,45 @@ export function RoadmapStepsCard({
                 </div>
               ))}
             </div>
-
+            {/* Add Step Button */}
             <div className="flex items-center gap-2 pt-2">
-              <input
-                type="text"
-                className="flex-1 border px-3 py-2 text-sm rounded"
-                placeholder="Add a new step..."
-                value={newStepTitle}
-                onChange={(e) => setNewStepTitle(e.target.value)}
-                disabled={stepLoading === -1}
-                onKeyDown={(e) => e.key === "Enter" && onAddStep()}
-              />
               <Button
                 size="sm"
-                onClick={onAddStep}
-                disabled={stepLoading === -1 || !newStepTitle.trim()}
+                onClick={handleOpenAddStep}
+                disabled={stepLoading === -1}
               >
-                <PlusCircle className="h-4 w-4 mr-1" /> Add
+                <PlusCircle className="h-4 w-4 mr-1" /> Add Step
               </Button>
             </div>
+            {/* Step Dialog Modal */}
+            <StepDialog
+              open={stepDialogOpen}
+              onOpenChange={setStepDialogOpen}
+              initialTitle={stepDialogInitialTitle}
+              initialDescription={stepDialogInitialDescription}
+              loading={stepLoading === -1}
+              submitLabel={stepDialogMode === "add" ? "Add Step" : "Save Step"}
+              onSubmit={(title, description) => {
+                if (stepDialogMode === "add") {
+                  setNewStepTitle(title);
+                  setNewStepDescription(description);
+                  if (onAddStepWithDescription) {
+                    onAddStepWithDescription(title, description);
+                  } else {
+                    onAddStep();
+                  }
+                } else if (stepDialogMode === "edit" && editingStepId !== null) {
+                  setStepEditTitle(title);
+                  setStepEditDescription(description);
+                  if (onSaveStepWithDescription) {
+                    onSaveStepWithDescription(editingStepId, title, description);
+                  } else {
+                    onSaveStep(editingStepId);
+                  }
+                }
+                setStepDialogOpen(false);
+              }}
+            />
           </div>
         ) : (
           <div className="space-y-3">

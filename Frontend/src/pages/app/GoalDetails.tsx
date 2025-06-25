@@ -30,6 +30,10 @@ function GoalDetails() {
   const [stepEditTitle, setStepEditTitle] = useState<string>("");
   const [newStepTitle, setNewStepTitle] = useState("");
 
+  // Add state for step descriptions
+  const [newStepDescription, setNewStepDescription] = useState("");
+  const [stepEditDescription, setStepEditDescription] = useState("");
+
   useEffect(() => {
     const fetchGoalAndRoadmap = async () => {
       if (!id) {
@@ -175,6 +179,41 @@ function GoalDetails() {
     }
   };
 
+  const handleAddStepWithDescription = (title: string, description: string) => {
+    if (!roadmap || !title.trim()) return;
+    setStepLoading(-1);
+    roadmapService.createStep(roadmap.id, { title, description, is_completed: false, order_index: roadmap.steps.length })
+      .then(async () => {
+        const roadmapData = await refreshRoadmap();
+        setNewStepTitle("");
+        setNewStepDescription("");
+        addToast({ message: "Step added", type: "success" });
+        if (roadmapData) await syncGoalStatusWithProgress(roadmapData);
+      })
+      .catch((err: any) => {
+        addToast({ message: err.message || "Failed to add step", type: "error" });
+      })
+      .finally(() => setStepLoading(null));
+  };
+
+  const handleSaveStepWithDescription = (stepId: number, title: string, description: string) => {
+    if (!title.trim()) return;
+    setStepLoading(stepId);
+    roadmapService.updateStep(stepId, { title, description })
+      .then(async () => {
+        const roadmapData = await refreshRoadmap();
+        setStepEditId(null);
+        setStepEditTitle("");
+        setStepEditDescription("");
+        addToast({ message: "Step updated", type: "success" });
+        if (roadmapData) await syncGoalStatusWithProgress(roadmapData);
+      })
+      .catch((err: any) => {
+        addToast({ message: err.message || "Failed to update step", type: "error" });
+      })
+      .finally(() => setStepLoading(null));
+  };
+
   const handleAddRoadmap = async () => {
     if (!id) return;
     setRoadmapLoading(true);
@@ -265,6 +304,12 @@ function GoalDetails() {
               setStepEditTitle={setStepEditTitle}
               setStepEditId={setStepEditId}
               setNewStepTitle={setNewStepTitle}
+              newStepDescription={newStepDescription}
+              setNewStepDescription={setNewStepDescription}
+              stepEditDescription={stepEditDescription}
+              setStepEditDescription={setStepEditDescription}
+              onAddStepWithDescription={handleAddStepWithDescription}
+              onSaveStepWithDescription={handleSaveStepWithDescription}
             />
           </div>
         </div>
