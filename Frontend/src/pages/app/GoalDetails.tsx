@@ -1,30 +1,20 @@
 import {
-  ArrowLeft,
-  Calendar,
-  CheckCircle2,
-  Edit,
-  Trash2,
-} from "lucide-react";
-import {
   Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardContent
 } from "@/components/ui/card";
-import {
-  formatDeadline,
-  getPriorityColor,
-  getStatusColor,
-} from "@/utils/goalUtils";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Goal } from "@/types/goal";
-import { Separator } from "@/components/ui/separator";
+import { GoalInfoCard } from '@/components/GoalInfoCard';
+import type { Roadmap } from '@/types/roadmap';
+import { RoadmapStepsCard } from '@/components/RoadmapStepsCard';
 import { goalsService } from "@/services/goalsService";
+import { roadmapService } from '@/services/roadmapService';
 import { useToast } from "@/contexts/ToastContext";
 
 function GoalDetails() {
@@ -34,6 +24,15 @@ function GoalDetails() {
   const [goal, setGoal] = useState<Goal | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
+  const [roadmapLoading, setRoadmapLoading] = useState(false);
+  const [roadmapError, setRoadmapError] = useState<string | null>(null);
+
+  // Add roadmap step CRUD state
+  const [stepLoading, setStepLoading] = useState<number | null>(null);
+  const [stepEditId, setStepEditId] = useState<number | null>(null);
+  const [stepEditTitle, setStepEditTitle] = useState<string>("");
+  const [newStepTitle, setNewStepTitle] = useState("");
 
   useEffect(() => {
     const fetchGoal = async () => {
@@ -57,8 +56,23 @@ function GoalDetails() {
       }
     };
 
+    const fetchRoadmap = async () => {
+      if (!id) return;
+      setRoadmapLoading(true);
+      setRoadmapError(null);
+      try {
+        const roadmapData = await roadmapService.getRoadmapByGoal(parseInt(id));
+        setRoadmap(roadmapData);
+      } catch (err: any) {
+        setRoadmapError(err.message || 'No roadmap found for this goal.');
+      } finally {
+        setRoadmapLoading(false);
+      }
+    };
+
     fetchGoal();
-  }, [id, addToast]);
+    fetchRoadmap();
+  }, [id]);
 
   const handleMarkCompleted = async () => {
     if (!goal || goal.status === "completed") return;
@@ -91,12 +105,98 @@ function GoalDetails() {
     }
   };
 
+  // CRUD handlers for roadmap steps
+  const handleToggleStep = async (stepId: number, isCompleted: boolean) => {
+    if (!roadmap) return;
+    setStepLoading(stepId);
+    try {
+      await roadmapService.updateStep(stepId, { is_completed: !isCompleted });
+      const roadmapData = await roadmapService.getRoadmapByGoal(Number(id));
+      setRoadmap(roadmapData);
+    } catch (err: any) {
+      addToast({ message: err.message || "Failed to update step", type: "error" });
+    } finally {
+      setStepLoading(null);
+    }
+  };
+
+  const handleDeleteStep = async (stepId: number) => {
+    if (!roadmap) return;
+    setStepLoading(stepId);
+    try {
+      await roadmapService.deleteStep(stepId);
+      const roadmapData = await roadmapService.getRoadmapByGoal(Number(id));
+      setRoadmap(roadmapData);
+      addToast({ message: "Step deleted", type: "success" });
+    } catch (err: any) {
+      console.error('Delete step error:', err);
+      addToast({ message: err.message || "Failed to delete step", type: "error" });
+    } finally {
+      setStepLoading(null);
+    }
+  };
+
+  const handleEditStep = (stepId: number, currentTitle: string) => {
+    setStepEditId(stepId);
+    setStepEditTitle(currentTitle);
+  };
+
+  const handleSaveStep = async (stepId: number) => {
+    if (!stepEditTitle.trim()) return;
+    setStepLoading(stepId);
+    try {
+      await roadmapService.updateStep(stepId, { title: stepEditTitle });
+      const roadmapData = await roadmapService.getRoadmapByGoal(Number(id));
+      setRoadmap(roadmapData);
+      setStepEditId(null);
+      setStepEditTitle("");
+      addToast({ message: "Step updated", type: "success" });
+    } catch (err: any) {
+      addToast({ message: err.message || "Failed to update step", type: "error" });
+    } finally {
+      setStepLoading(null);
+    }
+  };
+
+  const handleAddStep = async () => {
+    if (!roadmap || !newStepTitle.trim()) return;
+    setStepLoading(-1);
+    try {
+      await roadmapService.createStep(roadmap.id, { title: newStepTitle, is_completed: false, order_index: roadmap.steps.length });
+      const roadmapData = await roadmapService.getRoadmapByGoal(Number(id));
+      setRoadmap(roadmapData);
+      setNewStepTitle("");
+      addToast({ message: "Step added", type: "success" });
+    } catch (err: any) {
+      addToast({ message: err.message || "Failed to add step", type: "error" });
+    } finally {
+      setStepLoading(null);
+    }
+  };
+
+  const handleAddRoadmap = async () => {
+    if (!id) return;
+    setRoadmapLoading(true);
+    setRoadmapError(null);
+    try {
+      // Create a blank roadmap (title must be at least 1 character)
+      const newRoadmap = await roadmapService.createRoadmap(Number(id), { title: "My Roadmap", description: "", steps: [] });
+      setRoadmap(newRoadmap);
+      addToast({ message: "Blank roadmap created!", type: "success" });
+    } catch (err: any) {
+      setRoadmapError(err.message || "Failed to create roadmap");
+      addToast({ message: err.message || "Failed to create roadmap", type: "error" });
+    } finally {
+      setRoadmapLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center space-x-4 mb-6">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/app")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/app")}> 
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Goals
             </Button>
@@ -114,7 +214,7 @@ function GoalDetails() {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center space-x-4 mb-6">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/app")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/app")}> 
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Goals
             </Button>
@@ -126,12 +226,9 @@ function GoalDetails() {
                   {error || "Goal not found"}
                 </h2>
                 <p className="text-muted-foreground mb-4">
-                  The goal you're looking for doesn't exist or you don't have
-                  permission to view it.
+                  The goal you're looking for doesn't exist or you don't have permission to view it.
                 </p>
-                <Button onClick={() => navigate("/app")}>
-                  Go back to Goals
-                </Button>
+                <Button onClick={() => navigate("/app")}>Go back to Goals</Button>
               </CardContent>
             </Card>
           </div>
@@ -155,215 +252,36 @@ function GoalDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Goal Details (1/3 width) */}
           <div className="lg:col-span-1">
-            <Card className="shadow-lg">
-              <CardHeader className="pb-4">
-                <div className="flex flex-col gap-3 mb-4">
-                  <div className="flex flex-wrap gap-2">
-                    <Badge
-                      className={`text-xs ${getPriorityColor(goal.priority)}`}
-                    >
-                      {goal.priority} priority
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {goal.category}
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className={`text-xs ${getStatusColor(goal.status)}`}
-                    >
-                      {goal.status.replace("-", " ")}
-                    </Badge>
-                  </div>
-                </div>
-
-                <CardTitle className="text-xl leading-tight text-card-foreground mb-2">
-                  {goal.title}
-                </CardTitle>
-
-                <CardDescription className="text-sm leading-relaxed">
-                  {goal.description}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <Separator />
-
-                {/* Goal Info */}
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                      Deadline
-                    </h3>
-                    <div className="flex items-center text-sm text-foreground">
-                      <Calendar className="mr-2 h-3 w-3" />
-                      {formatDeadline(goal.deadline)}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                      Created
-                    </h3>
-                    <p className="text-sm text-foreground">
-                      {new Date(goal.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Action Buttons */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1"
-                      onClick={handleMarkCompleted}
-                      disabled={goal.status === "completed"}
-                    >
-                      <CheckCircle2 className="mr-1 h-3 w-3" />
-                      Complete
-                    </Button>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        // TODO: Implement edit functionality
-                        addToast({
-                          message: "Edit functionality coming soon!",
-                          type: "info",
-                        });
-                      }}
-                      className="flex-1"
-                    >
-                      <Edit className="mr-1 h-3 w-3" />
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1 text-destructive hover:text-destructive"
-                      onClick={handleDelete}
-                    >
-                      <Trash2 className="mr-1 h-3 w-3" />
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {goal && (
+              <GoalInfoCard
+                goal={goal}
+                onMarkCompleted={handleMarkCompleted}
+                onDelete={handleDelete}
+                addToast={(toast) => addToast({ ...toast, type: toast.type as 'error' | 'success' | 'warning' | 'info' })}
+              />
+            )}
           </div>
 
-          {/* Right Column - AI Roadmap Generation (2/3 width) */}
+          {/* Right Column - Roadmap Details (2/3 width) */}
           <div className="lg:col-span-2">
-            <Card className="shadow-lg h-full">
-              <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">AI</span>
-                  </div>
-                  Generate Roadmap with AI
-                </CardTitle>
-                <CardDescription>
-                  Let AI create a personalized roadmap to help you achieve "
-                  {goal.title}"
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                {/* AI Features Preview */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-lg">
-                    <h3 className="font-semibold text-sm mb-2">
-                      Smart Milestones
-                    </h3>
-                    <p className="text-muted-foreground text-xs">
-                      Break down your goal into achievable milestones
-                    </p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h3 className="font-semibold text-sm mb-2">
-                      Time Estimates
-                    </h3>
-                    <p className="text-muted-foreground text-xs">
-                      Get realistic time estimates for each step
-                    </p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h3 className="font-semibold text-sm mb-2">
-                      Resource Suggestions
-                    </h3>
-                    <p className="text-muted-foreground text-xs">
-                      Discover tools and resources to help you succeed
-                    </p>
-                  </div>
-                  <div className="p-4 border rounded-lg">
-                    <h3 className="font-semibold text-sm mb-2">
-                      Progress Tracking
-                    </h3>
-                    <p className="text-muted-foreground text-xs">
-                      Monitor your progress with AI-powered insights
-                    </p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Roadmap Preview Area */}
-                <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
-                  <div className="max-w-md mx-auto">
-                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle2 className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">
-                      Your AI Roadmap Will Appear Here
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-6">
-                      Click the button below to generate a personalized roadmap
-                      for achieving your goal
-                    </p>
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                    >
-                      <div className="flex items-center gap-2 text-white">
-                        <div className="w-4 h-4 bg-white/20 rounded flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            AI
-                          </span>
-                        </div>
-                        Generate Roadmap
-                      </div>
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Additional Info */}
-                <div className="bg-muted/30 rounded-lg p-4">
-                  <h4 className="font-semibold text-sm mb-2">
-                    💡 How it works
-                  </h4>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>
-                      • AI analyzes your goal details and current progress
-                    </li>
-                    <li>
-                      • Creates a step-by-step roadmap tailored to your timeline
-                    </li>
-                    <li>• Suggests resources, tools, and best practices</li>
-                    <li>• Provides milestone tracking and progress insights</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
+            <RoadmapStepsCard
+              roadmap={roadmap}
+              roadmapLoading={roadmapLoading}
+              roadmapError={roadmapError}
+              stepLoading={stepLoading}
+              stepEditId={stepEditId}
+              stepEditTitle={stepEditTitle}
+              newStepTitle={newStepTitle}
+              onToggleStep={handleToggleStep}
+              onEditStep={handleEditStep}
+              onSaveStep={handleSaveStep}
+              onDeleteStep={handleDeleteStep}
+              onAddStep={handleAddStep}
+              onAddRoadmap={handleAddRoadmap}
+              setStepEditTitle={setStepEditTitle}
+              setStepEditId={setStepEditId}
+              setNewStepTitle={setNewStepTitle}
+            />
           </div>
         </div>
       </div>
