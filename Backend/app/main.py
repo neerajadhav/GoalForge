@@ -8,6 +8,7 @@ from app.api.generate import generate_router
 from app.api.health import health_router
 from app.api.auth import auth_router
 from app.api.goals import router as goals_router
+from app.api.roadmaps import router as roadmaps_router
 from app.database import Base, engine
 
 # Load environment variables from .env file
@@ -37,6 +38,7 @@ app.add_middleware(
 # Include routers for endpoints
 app.include_router(auth_router)
 app.include_router(goals_router)
+app.include_router(roadmaps_router)
 app.include_router(upload_router)
 app.include_router(generate_router)
 app.include_router(health_router)  # Optional, for a health check endpoint

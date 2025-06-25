@@ -33,5 +33,6 @@ class Goal(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
-    # Relationship to User
+    # Relationships
     user = relationship("User", back_populates="goals")
+    roadmap = relationship("Roadmap", back_populates="goal", uselist=False, cascade="all, delete-orphan")

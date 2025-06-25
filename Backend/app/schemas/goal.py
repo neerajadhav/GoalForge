@@ -60,3 +60,13 @@ class GoalsListResponse(BaseModel):
     page: int
     page_size: int
     message: str = "Success"
+
+
+class GoalWithRoadmap(GoalBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    roadmap: Optional[dict] = None  # Will be populated manually to avoid circular imports
+
+    class Config:
+        from_attributes = True
