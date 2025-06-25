@@ -1,12 +1,14 @@
 import { Calendar, Trash2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDeadline, getPriorityColor, getStatusColor } from "@/utils/goalUtils";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Goal } from "@/types/goal";
 import { Separator } from "@/components/ui/separator";
+import { calculateRoadmapProgress } from "@/utils/roadmapUtils";
+import { roadmapService } from "@/services/roadmapService";
 import { useNavigate } from "react-router-dom";
 
 interface GoalCardProps {
@@ -16,6 +18,19 @@ interface GoalCardProps {
 
 export const GoalCard = memo(function GoalCard({ goal, onDelete }: GoalCardProps) {
   const navigate = useNavigate();
+  const [progress, setProgress] = useState<number | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    roadmapService.getRoadmapByGoal(goal.id)
+      .then((roadmap) => {
+        if (mounted) setProgress(calculateRoadmapProgress(roadmap));
+      })
+      .catch(() => {
+        if (mounted) setProgress(null);
+      });
+    return () => { mounted = false; };
+  }, [goal.id]);
 
   const handleView = useCallback(() => {
     navigate(`/app/goal/${goal.id}`);
@@ -55,7 +70,16 @@ export const GoalCard = memo(function GoalCard({ goal, onDelete }: GoalCardProps
             <p className="text-sm text-foreground">{new Date(goal.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
           </div>
         </div>
+        {/* Roadmap Progress */}
         <Separator />
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground">Roadmap Progress:</span>
+          {progress !== null ? (
+            <span className="text-xs font-semibold">{progress}%</span>
+          ) : (
+            <span className="text-xs text-muted-foreground">N/A</span>
+          )}
+        </div>
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <Button size="sm" variant="outline" className="flex-1" onClick={handleView}>
