@@ -10,10 +10,8 @@ import {
   Edit,
   Loader2,
   MoreHorizontal,
-  MoreVertical,
   PlusCircle,
   Trash2,
-  X,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -73,7 +71,6 @@ export function RoadmapStepsCard({
   onAddStep,
   onAddRoadmap,
   setStepEditTitle,
-  setStepEditId,
   setNewStepTitle,
   setNewStepDescription,
   setStepEditDescription,
