@@ -31,7 +31,6 @@ The platform consists of:
 | Database  | SQLite (default) / PostgreSQL         |
 | AI Engine | Google Gemini (Text & Image APIs)     |
 | Auth      | JWT, bcrypt password hashing          |
-| DevOps    | Docker-ready, .env-based configs      |
 
 ---
 
@@ -202,11 +201,3 @@ To contribute:
 ## License
 
 GoalForge is released under the MIT License. See the LICENSE file for details.
-
----
-
-If you would like a logo, architecture diagram, or deployment instructions added to this README, please open an issue or submit a pull request.
-
----
-
-Let me know if you want this saved to your README file.

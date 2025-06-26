@@ -180,8 +180,3 @@ Key dependencies (see `requirements.txt` for full list):
 - google-generativeai
 - jinja2
 - requests
-
----
-
-## License
-See [LICENSE](LICENSE) for details.

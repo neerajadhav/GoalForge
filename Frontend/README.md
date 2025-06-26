@@ -96,9 +96,3 @@ The frontend communicates with the backend (located in the `Backend/` directory)
 1. Fork the repository and create a new branch for your feature or bugfix.
 2. Make your changes and ensure code quality with `npm run lint`.
 3. Submit a pull request with a clear description of your changes.
-
----
-
-## License
-
-This project is licensed under the MIT License. See the main repository for details.
