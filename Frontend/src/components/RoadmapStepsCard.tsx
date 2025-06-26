@@ -8,6 +8,7 @@ import {
 import {
   CheckCircle2,
   Edit,
+  Loader2,
   MoreHorizontal,
   MoreVertical,
   PlusCircle,
@@ -23,6 +24,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import type { Roadmap } from "@/types/roadmap";
+import { Skeleton } from "./ui/skeleton";
 import { StepDialog } from "@/components/StepDialog";
 import { calculateRoadmapProgress } from "@/utils/roadmapUtils";
 import { useState } from "react";
@@ -137,7 +139,18 @@ export function RoadmapStepsCard({
       </CardHeader>
       <CardContent className="space-y-6">
         {roadmapLoading ? (
-          <p className="text-muted-foreground text-sm">Loading roadmap...</p>
+          <div className="flex flex-col items-center justify-center space-y-4 py-10">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
+              Generating your roadmap...
+            </p>
+
+            <div className="w-full max-w-md space-y-3">
+              <Skeleton className="h-5 w-3/4 rounded-lg" />
+              <Skeleton className="h-5 w-5/6 rounded-lg" />
+              <Skeleton className="h-5 w-2/3 rounded-lg" />
+            </div>
+          </div>
         ) : roadmapError ? (
           <div className="space-y-3">
             <p className="text-destructive text-sm">{roadmapError}</p>
@@ -207,7 +220,10 @@ export function RoadmapStepsCard({
                               <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-32 p-1">
+                          <DropdownMenuContent
+                            align="start"
+                            className="w-32 p-1"
+                          >
                             <DropdownMenuItem
                               onClick={(e) => {
                                 e.stopPropagation();
