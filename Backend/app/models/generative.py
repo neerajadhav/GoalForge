@@ -7,23 +7,18 @@ from app.auth.crud import get_user_gemini_key
 # Load environment variables
 load_dotenv()
 
-def configure_model(api_key: str = None):
-    """Configure Gemini model with provided API key or fallback to environment"""
+def configure_model(api_key: str):
+    """Configure Gemini model with provided API key (must be user-provided)"""
     if not api_key:
-        api_key = os.getenv("GEMINI_API_KEY")
-    
-    if not api_key:
-        raise ValueError("No Gemini API key provided. Please set your API key in your profile or contact administrator.")
-    
+        raise ValueError("No Gemini API key provided. Please upload your API key in your profile or contact administrator.")
     # Get model name from environment variable, default to gemini-1.5-flash
     model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-    
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(model_name)
     return model
 
 def get_model_for_user(db: Session, user_id: int):
-    """Get model instance using user's API key"""
+    """Get model instance using user's uploaded API key"""
     user_api_key = get_user_gemini_key(db, user_id)
     return configure_model(user_api_key)
 
