@@ -98,14 +98,7 @@ GoalForge Backend is a robust, secure, and extensible RESTful API built with Fas
 
 ## Generative AI Integration
 - **Google Gemini**: Users can provide their own Gemini API key (encrypted in DB)
-- **Text & Image Generation**: Endpoints for generating content using Gemini models
 - **Roadmap Generation**: Roadmaps for goals can be generated automatically using Gemini, providing users with AI-powered, step-by-step plans tailored to their objectives.
-
----
-
-## File Uploads
-- **Endpoint**: `/upload` accepts files up to 10MB
-- **Storage**: Files are saved in the backend's `uploads/` directory
 
 ---
 
@@ -154,16 +147,6 @@ uvicorn app.main:app --reload
 - `DATABASE_URL`: Database connection string (default: SQLite)
 - `SECRET_KEY`: Secret for JWT signing
 - `ENCRYPTION_KEY`: Key for encrypting API keys (generate with `generate_encryption_key.py`)
-- `GEMINI_API_KEY`: (Optional) Default Gemini API key
-- `GEMINI_MODEL`: (Optional) Gemini model name
-
----
-
-## Development & Scripts
-- `init_db.py`: Initialize database tables
-- `generate_encryption_key.py`: Generate a secure Fernet key for API key encryption
-- `migrate_roadmaps.py`, `populate_goals.py`: Data migration and seeding scripts
-- `run.sh`: (Optional) Script to start the backend
 
 ---
 

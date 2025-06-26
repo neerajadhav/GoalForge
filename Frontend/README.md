@@ -75,24 +75,3 @@ The frontend communicates with the backend (located in the `Backend/` directory)
    ```bash
    npm run build
    ```
-
----
-
-## Development Notes
-
-- **Environment Variables:**
-  - Configure API endpoints and other settings in `.env` files or `src/config/env.ts`.
-- **Component Reuse:**
-  - Use the components in `src/components/` to maintain UI consistency.
-- **Type Safety:**
-  - All API responses and data models are typed in `src/types/` and `src/schemas/` (if present).
-- **Error Boundaries:**
-  - The `ErrorBoundary.tsx` component is used to catch and display errors in the UI.
-
----
-
-## Contributing
-
-1. Fork the repository and create a new branch for your feature or bugfix.
-2. Make your changes and ensure code quality with `npm run lint`.
-3. Submit a pull request with a clear description of your changes.

@@ -182,21 +182,9 @@ SECRET_KEY=your-jwt-secret
 ENCRYPTION_KEY=fernet-key
 GEMINI_API_KEY=your-default-api-key
 ```
-
----
-
-## Development Notes
-
-- Use the Toast context to display API errors and success messages in the UI.
-- All data exchanges are typed end-to-end with TypeScript (frontend) and Pydantic (backend).
-- AI features require users to add their own Gemini API key (securely stored).
-
----
+--- 
 
 ## Team and Contribution
-
-This project is built as a mentored internship project with the goal of mastering full-stack development. All interns contribute in alignment with Git best practices and regular code reviews.
-
 To contribute:
 
 1. Fork the repository
