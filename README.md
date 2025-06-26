@@ -6,6 +6,7 @@ GoalForge is a full-stack web application designed to help users define ambitiou
 
 ### Generated Roadmap
 ![alt text](roadmap.png)
+
 ### Add your Gemini API Key
 ![alt text](geminiapi.png)
 ---
