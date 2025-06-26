@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
+import { RandomQuote } from "@/components/random-quote";
 import { RegisterForm } from "@/components/register-form";
 import { Target } from "lucide-react";
 
@@ -32,11 +33,9 @@ export default function RegisterPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+        <div className="absolute inset-0 h-full w-full flex items-center justify-center p-8">
+          <RandomQuote />
+        </div>
       </div>
     </div>
   );
