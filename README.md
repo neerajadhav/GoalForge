@@ -184,8 +184,7 @@ GEMINI_API_KEY=your-default-api-key
 ```
 --- 
 
-## Team and Contribution
-To contribute:
+## To contribute:
 
 1. Fork the repository
 2. Create a feature branch
