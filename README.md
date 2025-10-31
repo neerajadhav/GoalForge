@@ -1,6 +1,6 @@
 # GoalForge: AI-Powered Goal Management Platform
 
-GoalForge is a full-stack web application designed to help users define ambitious goals and transform them into clear, actionable, and time-managed step-by-step plans, automatically generated with the power of AI. Developed collaboratively by a team of frontend and backend interns under expert mentorship, GoalForge combines productivity and artificial intelligence for personal and professional success.
+GoalForge is a full-stack web application designed to help users define ambitious goals and transform them into clear, actionable, and time-managed step-by-step plans, automatically generated with the power of AI. GoalForge combines productivity and artificial intelligence for personal and professional success.
 
 ## Screenshots
 
